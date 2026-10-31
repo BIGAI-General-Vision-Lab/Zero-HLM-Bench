@@ -1,22 +1,40 @@
 <div align="center">
 
-# 🤖 Zero-HLM-Bench
+<h1><img src="docs/media/logo.png" width="46" height="46" alt="Zero-HLM logo" align="absmiddle"> Zero-HLM-Bench</h1>
 
-### A Simulation Benchmark for Humanoid Loco-Manipulation
+**A Simulation Benchmark for Humanoid Loco-Manipulation**
 
-[**📄 Paper**](https://arxiv.org/abs/2610.35075) · [**🌐 Project Page**](https://young-bit.github.io/zero-hlm/) · [**🤗 Dataset**](https://huggingface.co/datasets/YDY0427/Zero-HLM-Bench)
+[![arXiv](https://img.shields.io/badge/arXiv-2610.35075-b83b42.svg)](https://arxiv.org/abs/2610.35075)
+[![Project Page](https://img.shields.io/badge/Project-Page-3c718f.svg)](https://young-bit.github.io/zero-hlm/)
+[![Documentation](https://img.shields.io/badge/Documentation-526e9b.svg)](docs/installation.md)
+[![Hugging Face Data](https://img.shields.io/badge/Hugging%20Face-Data-c99a50.svg)](https://huggingface.co/datasets/YDY0427/Zero-HLM-Bench)
 
-[![Zero-HLM: paper overview followed by four-policy comparisons across three tasks](docs/media/benchmark-overview.gif)](https://young-bit.github.io/zero-hlm/#benchmark)
+[![Zero-HLM animated overview](docs/media/paper-overview.gif)](https://young-bit.github.io/zero-hlm/#abstract)
 
-*Selected evaluation rollouts from Zero-HLM: four policies, three tasks, and three configurations per task. Gold indicates success; red indicates failure. Playback is condensed for this overview.*
-
-[Video](docs/media/benchmark-overview.mp4) · [Installation](#installation) · [Training Data](#training-data) · [Evaluation](#evaluation) · [Custom Policies](#custom-policies) · [Citation](#citation)
+[![Full evaluation rollouts: three task rows and four policy columns](docs/media/benchmark-overview.gif)](docs/media/benchmark-overview.mp4)
 
 </div>
 
-<a id="overview"></a>
+## 📢 News & Updates
 
-## 🔎 Overview
+- **2026-10-31** — Initial benchmark package: three tasks, fixed evaluation configurations, training datasets, and a policy server–simulation client interface.
+
+## 📑 Table of Contents
+
+- [What Is Zero-HLM-Bench?](#what-is-zero-hlm-bench)
+- [Tasks](#tasks)
+- [Installation](#installation)
+- [Training Data](#training-data)
+- [Evaluation](#evaluation)
+- [Custom Policies](#custom-policies)
+- [Repository Structure](#repository-structure)
+- [TODO](#todo)
+- [Citation](#citation)
+- [Acknowledgments and Licensing](#acknowledgments-and-licensing)
+
+<a id="what-is-zero-hlm-bench"></a>
+
+## 🔎 What Is Zero-HLM-Bench?
 
 **Zero-HLM-Bench** evaluates language-conditioned humanoid loco-manipulation in reconstructed environments. It combines scene collision geometry, Gaussian-rendered observations, and SONIC whole-body control on a Unitree G1. Models are compared using fixed initial configurations and shared task-level success criteria.
 
