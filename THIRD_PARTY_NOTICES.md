@@ -20,3 +20,5 @@ Cosmos-Reason2 configuration and tokenizer resources retain the [NVIDIA Open Mod
 GEAR-SONIC model assets and Cosmos-Reason2 resources: Licensed by NVIDIA Corporation under the NVIDIA Open Model License. Built on NVIDIA Cosmos.
 
 NVIDIA Grid files are obtained by `scripts/download_external_assets.py` directly from NVIDIA's versioned asset server. They are excluded from source packages and remain subject to the terms supplied by NVIDIA; the Isaac Lab code license does not cover those assets. See NVIDIA's [asset licensing FAQ](https://docs.isaacsim.omniverse.nvidia.com/6.0.0/common/license-faq.html) and [additional software and materials terms](https://www.nvidia.com/en-us/agreements/enterprise-software/isaac-sim-additional-software-and-materials-license/).
+
+The separately downloaded [Zero-HLM-Bench GR00T checkpoints](https://huggingface.co/YDY0427/Zero-HLM-Bench-GR00T) retain the upstream model [NVIDIA LICENSE](https://huggingface.co/YDY0427/Zero-HLM-Bench-GR00T/blob/main/LICENSE), including its non-commercial research and evaluation limitation. The integration code license does not replace the model-weight license.

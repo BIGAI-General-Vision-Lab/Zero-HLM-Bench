@@ -6,7 +6,13 @@ The **server runs model inference**; the **client handles simulation, rendering,
 
 Prepare the [policy environment](../integrations/groot/README.md) and [simulation environment](installation.md). Run both commands from the repository root.
 
-Place a trained Task 2 checkpoint in `checkpoints/task2`, including model weights, `config.json`, and `processor_config.json`.
+Download the released Task 2 checkpoint:
+
+```bash
+python scripts/download_models.py --task task2
+```
+
+Use `--task all` for all three tasks. Each checkpoint includes weights, the shard index, model configuration, and processor configuration, normalization statistics, and embodiment mapping. Task 3 retains these processor files in `processor/`; the launcher supports both layouts.
 
 **Terminal 1 · Policy environment**
 

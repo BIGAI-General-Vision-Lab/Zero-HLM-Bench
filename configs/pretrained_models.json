@@ -1,0 +1,168 @@
+{
+  "repo_id": "YDY0427/Zero-HLM-Bench-GR00T",
+  "tasks": {
+    "task1": {
+      "files": [
+        {
+          "path": "config.json",
+          "size": 2147,
+          "sha256": "7c5119fcbe4dc67909a65ad280e469802ed6355bc250d2f6cccc48c0d9f18007"
+        },
+        {
+          "path": "embodiment_id.json",
+          "size": 2226,
+          "sha256": "e0ee9ef7abc2c324318363d2d809631df5524245698021a6477e48f0b2e52f7f"
+        },
+        {
+          "path": "model-00001-of-00002.safetensors",
+          "size": 4990519232,
+          "sha256": "1c4ff4fdd441049ed193a6e6be39868d43137c184e3396880ace227fc19c8188"
+        },
+        {
+          "path": "model-00002-of-00002.safetensors",
+          "size": 1919980184,
+          "sha256": "a6f3585f4a1491f168a505708d5e80e95611ce8391d81b412863e7ef02dd44af"
+        },
+        {
+          "path": "model.safetensors.index.json",
+          "size": 104985,
+          "sha256": "407804ea5a62f4f8823f48811ae0edbb82fac101e9cf4d7273e6e2f692bb4d59"
+        },
+        {
+          "path": "processor_config.json",
+          "size": 27289,
+          "sha256": "9a229ea60e481e1243765a6396ff2a1a0cd083367a3990f128b111331c0830ea"
+        },
+        {
+          "path": "statistics.json",
+          "size": 4310183,
+          "sha256": "747377775474fa4b7fb4738092baad5dea1e762b9bc4350927c02049ea801034"
+        },
+        {
+          "path": "LICENSE",
+          "size": 4063,
+          "sha256": "fdc54058d8b52bbb3b06c924326ff95a15687b08b15f92bc63adabc291638c89"
+        },
+        {
+          "path": "COSMOS-LICENSE.md",
+          "size": 5861,
+          "sha256": "66d986cc6ced1ec660457b40a7d56fad96d082cea1a979496964596a8b2ac934"
+        },
+        {
+          "path": "NOTICE",
+          "size": 327,
+          "sha256": "4674d1205173fa386813241f5dbddc812ecb1ed6e8ff50ee09e71651494479d5"
+        }
+      ]
+    },
+    "task2": {
+      "files": [
+        {
+          "path": "config.json",
+          "size": 2147,
+          "sha256": "7c5119fcbe4dc67909a65ad280e469802ed6355bc250d2f6cccc48c0d9f18007"
+        },
+        {
+          "path": "embodiment_id.json",
+          "size": 2226,
+          "sha256": "e0ee9ef7abc2c324318363d2d809631df5524245698021a6477e48f0b2e52f7f"
+        },
+        {
+          "path": "model-00001-of-00002.safetensors",
+          "size": 4990519232,
+          "sha256": "0070167f7cf6899aea520da91c698ccc49c9a8ad812308c1bef6a76da7a2eeaa"
+        },
+        {
+          "path": "model-00002-of-00002.safetensors",
+          "size": 1919980184,
+          "sha256": "3f602d50e8818fa501dafec1509129bffca34bc6db3498d17d31f830ca4ac5bb"
+        },
+        {
+          "path": "model.safetensors.index.json",
+          "size": 104985,
+          "sha256": "407804ea5a62f4f8823f48811ae0edbb82fac101e9cf4d7273e6e2f692bb4d59"
+        },
+        {
+          "path": "processor_config.json",
+          "size": 27289,
+          "sha256": "9a229ea60e481e1243765a6396ff2a1a0cd083367a3990f128b111331c0830ea"
+        },
+        {
+          "path": "statistics.json",
+          "size": 4310202,
+          "sha256": "055b82a5a4a69f8ee42ec5c25da1e2e4d767cfd1a5d7f6ecfb01f0c3f3268ae4"
+        },
+        {
+          "path": "LICENSE",
+          "size": 4063,
+          "sha256": "fdc54058d8b52bbb3b06c924326ff95a15687b08b15f92bc63adabc291638c89"
+        },
+        {
+          "path": "COSMOS-LICENSE.md",
+          "size": 5861,
+          "sha256": "66d986cc6ced1ec660457b40a7d56fad96d082cea1a979496964596a8b2ac934"
+        },
+        {
+          "path": "NOTICE",
+          "size": 327,
+          "sha256": "4674d1205173fa386813241f5dbddc812ecb1ed6e8ff50ee09e71651494479d5"
+        }
+      ]
+    },
+    "task3": {
+      "files": [
+        {
+          "path": "config.json",
+          "size": 2147,
+          "sha256": "7c5119fcbe4dc67909a65ad280e469802ed6355bc250d2f6cccc48c0d9f18007"
+        },
+        {
+          "path": "model-00001-of-00002.safetensors",
+          "size": 4990519232,
+          "sha256": "af355592c45eeea2f43ac60baca9ba58e2015675708f86cbedb15f9b4c98218c"
+        },
+        {
+          "path": "model-00002-of-00002.safetensors",
+          "size": 1919980184,
+          "sha256": "f8d867931dfc8f5acfc309ba6b70f32525f9186902126f027c5db9608e5cf0fa"
+        },
+        {
+          "path": "model.safetensors.index.json",
+          "size": 104985,
+          "sha256": "407804ea5a62f4f8823f48811ae0edbb82fac101e9cf4d7273e6e2f692bb4d59"
+        },
+        {
+          "path": "processor/embodiment_id.json",
+          "size": 2226,
+          "sha256": "e0ee9ef7abc2c324318363d2d809631df5524245698021a6477e48f0b2e52f7f"
+        },
+        {
+          "path": "processor/processor_config.json",
+          "size": 27289,
+          "sha256": "9a229ea60e481e1243765a6396ff2a1a0cd083367a3990f128b111331c0830ea"
+        },
+        {
+          "path": "processor/statistics.json",
+          "size": 4310296,
+          "sha256": "c1d5854f2f39188adab363edfaaec313c555d410fc7c35fe67782c2e7aeeead0"
+        },
+        {
+          "path": "LICENSE",
+          "size": 4063,
+          "sha256": "fdc54058d8b52bbb3b06c924326ff95a15687b08b15f92bc63adabc291638c89"
+        },
+        {
+          "path": "COSMOS-LICENSE.md",
+          "size": 5861,
+          "sha256": "66d986cc6ced1ec660457b40a7d56fad96d082cea1a979496964596a8b2ac934"
+        },
+        {
+          "path": "NOTICE",
+          "size": 327,
+          "sha256": "4674d1205173fa386813241f5dbddc812ecb1ed6e8ff50ee09e71651494479d5"
+        }
+      ]
+    }
+  },
+  "revision": "9be36d791211d062f38cf3654a930633c072cb24"
+}

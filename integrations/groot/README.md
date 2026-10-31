@@ -22,12 +22,13 @@ Flash Attention is optional; the server uses PyTorch SDPA when it is absent.
 
 ## Run
 
-Provide a trained checkpoint containing model weights, `config.json`, and `processor_config.json`:
+Download a [released checkpoint](https://huggingface.co/YDY0427/Zero-HLM-Bench-GR00T), then start the server:
 
 ```bash
+python scripts/download_models.py --task task2
 python scripts/start_server.py --checkpoint checkpoints/task2 --port 5555
 ```
 
-The launcher supplies the bundled backbone configuration and processor files. Inference weights come from your checkpoint.
+The launcher supplies the bundled Cosmos backbone configuration and tokenizer. Each checkpoint supplies model weights and its task-specific processor configuration, statistics, and embodiment mapping. Task 3 stores processor files in `processor/`; retain this directory when using your own export.
 
 Start the simulation client using the [evaluation guide](../../docs/server_client.md). This package supports inference; use an upstream GR00T checkout for training.

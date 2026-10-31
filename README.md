@@ -7,15 +7,16 @@
 [![arXiv](https://img.shields.io/badge/arXiv-2610.35075-b83b42.svg)](https://arxiv.org/abs/2610.35075)
 [![Project Page](https://img.shields.io/badge/Project-Page-3c718f.svg)](https://young-bit.github.io/zero-hlm/)
 [![Documentation](https://img.shields.io/badge/Documentation-526e9b.svg)](docs/installation.md)
+[![Hugging Face Models](https://img.shields.io/badge/Hugging%20Face-Models-668cba.svg)](https://huggingface.co/YDY0427/Zero-HLM-Bench-GR00T)
 [![Hugging Face Data](https://img.shields.io/badge/Hugging%20Face-Data-c99a50.svg)](https://huggingface.co/datasets/YDY0427/Zero-HLM-Bench)
 
-[![Watch Zero-HLM-Bench (MP4)](docs/media/benchmark-overview.jpg)](docs/media/benchmark-overview.mp4)
+[![Zero-HLM-Bench animated overview](docs/media/benchmark-overview.gif)](docs/media/benchmark-overview.mp4)
 
 </div>
 
 ## 📢 News & Updates
 
-- **2026-10-31** — Initial benchmark package: three tasks, fixed evaluation configurations, training datasets, and a policy server–simulation client interface.
+- **2026-10-31** — Initial benchmark package: three tasks, fixed evaluation configurations, training datasets, GR00T checkpoints, and a policy server–simulation client interface.
 
 ## 📑 Table of Contents
 
@@ -35,7 +36,7 @@
 
 The benchmark accompanies [Zero-HLM: Generalizable Humanoid Loco-Manipulation without Real Robot Data](https://arxiv.org/abs/2610.35075).
 
-**📦 Current release:** **three tasks**, **100 evaluation configurations per task**, and **800 simulation training demonstrations per task**, with a separate policy server and simulation client.
+**📦 Current release:** **three tasks**, **100 evaluation configurations per task**, and **800 simulation training demonstrations per task**, and **GR00T N1.7 checkpoints**, with a separate policy server and simulation client.
 
 <a id="tasks"></a>
 
@@ -104,7 +105,15 @@ Use `--task task1`, `task2`, or `task3` to download a single task. Downloads are
 
 ## 📊 Evaluation
 
-The **server runs policy inference**; the **client handles simulation, rendering, control, and scoring**. With a trained Task 2 checkpoint in `checkpoints/task2`, start the following commands from the repository root.
+The **server runs policy inference**; the **client handles simulation, rendering, control, and scoring**. Download the [GR00T N1.7 checkpoints](https://huggingface.co/YDY0427/Zero-HLM-Bench-GR00T) used for evaluation:
+
+```bash
+python scripts/download_models.py --task all
+```
+
+Each checkpoint is approximately **6.9 GB** (**20.7 GB** for all three). Use `--task task2` to download only the example below. Downloads use a pinned revision and verify every file with SHA-256. The checkpoints retain their original training selections, which differ from the released 800-demonstration subsets.
+
+From the repository root, evaluate Task 2:
 
 **Terminal 1 · Policy environment**
 
