@@ -9,7 +9,7 @@
 [![Documentation](https://img.shields.io/badge/Documentation-526e9b.svg)](docs/installation.md)
 [![Hugging Face Data](https://img.shields.io/badge/Hugging%20Face-Data-c99a50.svg)](https://huggingface.co/datasets/YDY0427/Zero-HLM-Bench)
 
-[![Zero-HLM animated overview](docs/media/paper-overview.gif)](https://young-bit.github.io/zero-hlm/#abstract)
+[![Play the Zero-HLM highlight (MP4)](docs/media/paper-overview.jpg)](https://young-bit.github.io/zero-hlm/media/abstract-highlight.mp4)
 
 [![Full evaluation rollouts: three task rows and four policy columns](docs/media/benchmark-overview.gif)](docs/media/benchmark-overview.mp4)
 
