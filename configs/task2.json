@@ -1,0 +1,76 @@
+{
+  "schema_version": 1,
+  "task": "task2",
+  "name": "Pick and place a hat",
+  "evaluator": "scripts/imitation_learning/robomimic/evaluate_task2.py",
+  "protocol": "configs/protocol/shared",
+  "env": {
+    "TASK2_SCENE_USD_PATH": "{root}/assets/shared/scenes/task12.usdc",
+    "TASK2_EVAL_ASSETS_ROOT": "{root}/assets/task2/usd",
+    "TASK2_EVAL_BUNDLE_ROOT": "{root}/assets/task2"
+  },
+  "args": {
+    "--headless": true,
+    "--device": "cuda:0",
+    "--model_name": "sim",
+    "--embodiment": "unitree_g1_sonic",
+    "--seed": 0,
+    "--num_envs": 1,
+    "--fallback_env_counts": [
+      1
+    ],
+    "--no-resume": true,
+    "--max_control_steps": 2000,
+    "--chunk_horizon": 40,
+    "--gripper_state_source": "command_binary",
+    "--gr00t_timeout_ms": 120000,
+    "--models_dir": "{root}/assets/shared/sonic",
+    "--gs_scene_path": "{root}/assets/task2/assets/GS_Assets/B1_0711.ply",
+    "--gs_backend": "auto",
+    "--gs_foreground_mode": "isaac_mesh",
+    "--headcam_extrinsic_mode": "task_cfg",
+    "--headcam_calib": "{root}/assets/task2/assets/calibration/111_final_ex_0511.json",
+    "--camera_warmup_renders": 10,
+    "--two_d_gs_real2sim_root": "{root}/runtime/submodule/2D_GS/Real2Sim",
+    "--init_joint_state_json": "{root}/assets/task2/assets/evaluation/task2_initial_body_pose_episode_000000.json",
+    "--init_joint_state_mode": "episode_first_frame",
+    "--vector_env_spacing": 20,
+    "--log_every": 100,
+    "--no-gs_apply_training_color_match": true,
+    "--sonic_cpu_onnx": true,
+    "--diagnostic_video_interval": 10
+  },
+  "manifest": {
+    "path": "configs/manifests/task2_cabinet_xy15cm_hat_xy5cm_100.jsonl",
+    "rows": 100,
+    "sha256": "1d19d9affd3ca1e538a8c6f58f0cf8261bcf00ae05d68b98b8b54c79b3abec9d"
+  },
+  "integrity": [
+    {
+      "path": "configs/manifests/task2_cabinet_xy15cm_hat_xy5cm_100_contract.json",
+      "sha256": "1138a374fa8970883642fb04387629394b45828e694731c60c7445cd77f3b2aa"
+    },
+    {
+      "path": "configs/protocol/shared/processor_config.json",
+      "sha256": "842f45d252cd472b0126bd7b3ffa5441609e012e11d0d0bcaa9541a7c6a47bcb"
+    }
+  ],
+  "required_paths": [
+    "{root}/assets/shared/sonic/model_decoder.onnx",
+    "{root}/assets/shared/sonic/model_encoder.onnx",
+    "{root}/assets/shared/sonic/observation_config.yaml",
+    "{root}/assets/task2/assets/GS_Assets/B1_0711.ply",
+    "{root}/assets/task2/assets/calibration/111_final_ex_0511.json",
+    "{root}/runtime/submodule/2D_GS/Real2Sim",
+    "{root}/assets/task2/assets/evaluation/task2_initial_body_pose_episode_000000.json",
+    "{root}/assets/shared/scenes/task12.usdc",
+    "{root}/assets/task2/usd/robots/final_robot_usd_align_sonic.usd",
+    "{root}/assets/task2/usd/assets/B1/hat_bottom_heavy_0p1kg_baked_centered.usd",
+    "{root}/assets/task2/usd/assets/B1/little_desk_light.usd",
+    "{root}/assets/task2/usd/assets/B1/task2_guizi_rigid.usdc"
+  ],
+  "scene_assets": {
+    "path": "configs/scene_assets.json",
+    "sha256": "028576c08c303bbd580b6a3d2d0cc5dbfed65157643ecc9b896be3e513c5f0e0"
+  }
+}

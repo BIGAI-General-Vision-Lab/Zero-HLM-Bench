@@ -1,0 +1,14 @@
+/assets/task1/assets/GS_Assets/B1_0716_aligned_0711.ply filter=lfs diff=lfs merge=lfs -text
+/assets/task1/robot.usdc filter=lfs diff=lfs merge=lfs -text
+/assets/task2/assets/GS_Assets/B1_0711.ply filter=lfs diff=lfs merge=lfs -text
+/assets/task2/usd/assets/B1/task2_guizi_rigid.usdc filter=lfs diff=lfs merge=lfs -text
+/assets/task2/usd/robots/final_robot_usd_align_sonic.usd filter=lfs diff=lfs merge=lfs -text
+/assets/task3/assets/GS_Assets/B1_art/obj_0_gs_task3_world.ply filter=lfs diff=lfs merge=lfs -text
+/assets/task3/scene.usdc filter=lfs diff=lfs merge=lfs -text
+/assets/task3/usd/assets/B1/task3_lanzi_Model_1_scaled_centered.usd filter=lfs diff=lfs merge=lfs -text
+/assets/task3/usd/robots/final_robot_usd_align_sonic_portable.usd filter=lfs diff=lfs merge=lfs -text
+/assets/shared/scenes/task12.usdc filter=lfs diff=lfs merge=lfs -text
+/assets/shared/sonic/model_decoder.onnx filter=lfs diff=lfs merge=lfs -text
+/assets/shared/sonic/model_encoder.onnx filter=lfs diff=lfs merge=lfs -text
+/assets/shared/scenes/astra/scene.usdc filter=lfs diff=lfs merge=lfs -text
+/assets/shared/scenes/astra/textures/*.png filter=lfs diff=lfs merge=lfs -text

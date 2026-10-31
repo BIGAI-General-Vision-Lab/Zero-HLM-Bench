@@ -1,0 +1,14 @@
+# Copyright (c) 2022-2025, The Isaac Lab Project Developers (https://github.com/isaac-sim/IsaacLab/blob/main/CONTRIBUTORS.md).
+# All rights reserved.
+#
+# SPDX-License-Identifier: BSD-3-Clause
+
+"""Sub-module for environment managers.
+
+The managers are used to handle various aspects of the environment such as randomization events, curriculum,
+and observations. Each manager implements a specific functionality for the environment. The managers are
+designed to be modular and can be easily extended to support new functionality.
+"""
+
+from .recorder_manager import DatasetExportMode, RecorderManager, RecorderManagerBaseCfg, RecorderTerm
+from .event_manager import EventManager

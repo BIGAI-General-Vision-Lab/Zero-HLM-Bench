@@ -1,0 +1,18 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.cache/
+.venv/
+build/
+dist/
+outputs/
+checkpoints/
+/data/
+*.part
+
+# Separately licensed assets fetched from NVIDIA.
+/assets/task1/assets/usd/assets/Isaac/Grid/default_environment.usd
+/assets/task1/assets/usd/assets/Isaac/Grid/Materials/Textures/Wireframe_blue.png
+/assets/task1/assets/usd/assets/Isaac/Grid/Materials/Textures/WireframeBlur_basecolor.png
+/assets/task1/assets/usd/assets/Isaac/Grid/Materials/Textures/WireframeBlur_blue.png

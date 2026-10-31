@@ -1,0 +1,29 @@
+[
+  {
+    "task": "task1",
+    "episodes": 800,
+    "frames": 648370,
+    "archive": "zero_hlm_bench_task1_800.tar",
+    "archive_bytes": 2791987200,
+    "sha256": "a4e122b89089b7d7eff38ee7de1912ac3a743decd1333665be83566124a00072",
+    "url": "https://huggingface.co/datasets/YDY0427/Zero-HLM-Bench/resolve/bc1b0a459df805ad7c5c01e4db1ccfb0a773007b/zero_hlm_bench_task1_800.tar"
+  },
+  {
+    "task": "task2",
+    "episodes": 800,
+    "frames": 750245,
+    "archive": "zero_hlm_bench_task2_800.tar",
+    "archive_bytes": 3024332800,
+    "sha256": "f1eee1882f800925d0f3469737b024e4c142c47a13f312d4433c79f8d3ee64d9",
+    "url": "https://huggingface.co/datasets/YDY0427/Zero-HLM-Bench/resolve/bc1b0a459df805ad7c5c01e4db1ccfb0a773007b/zero_hlm_bench_task2_800.tar"
+  },
+  {
+    "task": "task3",
+    "episodes": 800,
+    "frames": 963304,
+    "archive": "zero_hlm_bench_task3_800.tar",
+    "archive_bytes": 2589358080,
+    "sha256": "36ebef9fdf109493e4e6e3fd625c5f09a3aa1f264da0956080684f905aa36494",
+    "url": "https://huggingface.co/datasets/YDY0427/Zero-HLM-Bench/resolve/bc1b0a459df805ad7c5c01e4db1ccfb0a773007b/zero_hlm_bench_task3_800.tar"
+  }
+]

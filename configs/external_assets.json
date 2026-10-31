@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "provider": "NVIDIA",
+  "asset_collection": "Isaac Sim 4.5 Grid",
+  "license_url": "https://www.nvidia.com/en-us/agreements/enterprise-software/isaac-sim-additional-software-and-materials-license/",
+  "notice": "These separately licensed files are downloaded directly from NVIDIA and are excluded from the public source package. NVIDIA terms govern their use.",
+  "files": [
+    {
+      "path": "assets/task1/assets/usd/assets/Isaac/Grid/default_environment.usd",
+      "url": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/4.5/Isaac/Environments/Grid/default_environment.usd",
+      "bytes": 7892,
+      "sha256": "394fa87bda9096bc80090e0a67bff8f5c283ff270332f6037391a5d64204fc60",
+      "distribution": "external_download",
+      "include_in_source_package": false
+    },
+    {
+      "path": "assets/task1/assets/usd/assets/Isaac/Grid/Materials/Textures/Wireframe_blue.png",
+      "url": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/4.5/Isaac/Environments/Grid/Materials/Textures/Wireframe_blue.png",
+      "bytes": 111895,
+      "sha256": "940b96ee8c8e53bd1acbc770d4ca0ac98bed9c96439ab386d1b27dbc9790cc4e",
+      "distribution": "external_download",
+      "include_in_source_package": false
+    },
+    {
+      "path": "assets/task1/assets/usd/assets/Isaac/Grid/Materials/Textures/WireframeBlur_basecolor.png",
+      "url": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/4.5/Isaac/Environments/Grid/Materials/Textures/WireframeBlur_basecolor.png",
+      "bytes": 436257,
+      "sha256": "deab39088eaf39ed7be951966c5e6bd5e58b90ab64743b0cdc8e5579fd5a99d9",
+      "distribution": "external_download",
+      "include_in_source_package": false
+    },
+    {
+      "path": "assets/task1/assets/usd/assets/Isaac/Grid/Materials/Textures/WireframeBlur_blue.png",
+      "url": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/4.5/Isaac/Environments/Grid/Materials/Textures/WireframeBlur_blue.png",
+      "bytes": 1474958,
+      "sha256": "44fc0e82007bb0bd94631cd7ec45986a71ed74b9413899fbffac13efe151be4b",
+      "distribution": "external_download",
+      "include_in_source_package": false
+    }
+  ],
+  "source_package_excludes": [
+    "assets/task1/assets/usd/assets/Isaac/Grid/default_environment.usd",
+    "assets/task1/assets/usd/assets/Isaac/Grid/Materials/Textures/Wireframe_blue.png",
+    "assets/task1/assets/usd/assets/Isaac/Grid/Materials/Textures/WireframeBlur_basecolor.png",
+    "assets/task1/assets/usd/assets/Isaac/Grid/Materials/Textures/WireframeBlur_blue.png"
+  ]
+}

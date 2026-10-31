@@ -1,0 +1,206 @@
+{
+  "upstream": "https://github.com/NVIDIA/Isaac-GR00T",
+  "model": "GR00T N1.7",
+  "files": [
+    {
+      "path": "gr00t/__init__.py",
+      "sha256": "8ca497b0d0df01862ccc0255fc47782ca778744671702636906c1b83802f41c4"
+    },
+    {
+      "path": "gr00t/configs/__init__.py",
+      "sha256": "c4dc0cf54a15db963e684ed996a7ceb38a3737390327929f05930ac903f33514"
+    },
+    {
+      "path": "gr00t/configs/base_config.py",
+      "sha256": "1742f89f048f8a73750ce937f5162d870adcf7fca731b7c90a44cede175c6dce"
+    },
+    {
+      "path": "gr00t/configs/data/__init__.py",
+      "sha256": "c4dc0cf54a15db963e684ed996a7ceb38a3737390327929f05930ac903f33514"
+    },
+    {
+      "path": "gr00t/configs/data/data_config.py",
+      "sha256": "182f832a252fa7d10878a8dea5a03811da466af82c8123408420c62b4d6256ad"
+    },
+    {
+      "path": "gr00t/configs/data/embodiment_configs.py",
+      "sha256": "59cd191243f6f2d1db9443e4c78b2e0635fb7baa5e2b7a6323bc234e09dffb29"
+    },
+    {
+      "path": "gr00t/configs/model/__init__.py",
+      "sha256": "44ae743aefd2c21687aa0f3709bbc4206e465c3c810c22f5d406905f9b2f5a8b"
+    },
+    {
+      "path": "gr00t/configs/model/gr00t_n1d7.py",
+      "sha256": "2ad39a6897c6411d91847818ae0580671220d51dc9dc535d3edf88205952adfb"
+    },
+    {
+      "path": "gr00t/configs/training/__init__.py",
+      "sha256": "c4dc0cf54a15db963e684ed996a7ceb38a3737390327929f05930ac903f33514"
+    },
+    {
+      "path": "gr00t/configs/training/training_config.py",
+      "sha256": "c1f669f05f601ec5790ee33d3a80fbe82dc42108b8dc0600d6e1cb27a82d0018"
+    },
+    {
+      "path": "gr00t/data/__init__.py",
+      "sha256": "c4dc0cf54a15db963e684ed996a7ceb38a3737390327929f05930ac903f33514"
+    },
+    {
+      "path": "gr00t/data/collator/__init__.py",
+      "sha256": "fc7caf6412180d0bc12ca41be082e0cdd141daa90ba12d958628bbdf57f80002"
+    },
+    {
+      "path": "gr00t/data/collator/collators.py",
+      "sha256": "2fb50c5a808d023aa759043f4ddaf54a313efc04ff036a3c16b2c126b808c516"
+    },
+    {
+      "path": "gr00t/data/dataset/__init__.py",
+      "sha256": "c4dc0cf54a15db963e684ed996a7ceb38a3737390327929f05930ac903f33514"
+    },
+    {
+      "path": "gr00t/data/dataset/factory.py",
+      "sha256": "89aca290edd7a74bc49e5ba72ec7f7d328c47a8e18f0a7166fd4bf72060cc32d"
+    },
+    {
+      "path": "gr00t/data/dataset/lerobot_episode_loader.py",
+      "sha256": "9231fdad207a6e42a75e4fe02c58aa566752418feab2fe0d1ddfdf0f17a02695"
+    },
+    {
+      "path": "gr00t/data/dataset/sharded_mixture_dataset.py",
+      "sha256": "18637db6d87aaa42c57ef45b363644349ccbcad3ec5e263410d23f5c256221d7"
+    },
+    {
+      "path": "gr00t/data/dataset/sharded_single_step_dataset.py",
+      "sha256": "4b252a17d18cc2f5dfafb03205cb4ae65bd8433c64123f3fd806eacffa441c81"
+    },
+    {
+      "path": "gr00t/data/embodiment_tags.py",
+      "sha256": "924cf9447a147361bde0bb93fc86b26ca26722dd782538481e47168d021532b9"
+    },
+    {
+      "path": "gr00t/data/interfaces.py",
+      "sha256": "5e47ef59bdfecd0402928c136e52b072fa6476cf9e7ed697bf551970a37b7587"
+    },
+    {
+      "path": "gr00t/data/state_action/action_chunking.py",
+      "sha256": "ffc71798205b549f7f0e96291c44e1bc7c4e829c31cda9b772493d5f1c929728"
+    },
+    {
+      "path": "gr00t/data/state_action/pose.py",
+      "sha256": "5c1d38f0a0e341c0f56e5256d8d531d011a94e27dca048331ffa5dfcbe6ca6bc"
+    },
+    {
+      "path": "gr00t/data/state_action/state_action_processor.py",
+      "sha256": "45cf253d150f4323f8e199877ac167bad9908f8dffe132e60364b3384542def6"
+    },
+    {
+      "path": "gr00t/data/stats.py",
+      "sha256": "8869dbf37d3ed31fdeb619ad27ad6b863c6695493a71e96048e63af94c010ff5"
+    },
+    {
+      "path": "gr00t/data/types.py",
+      "sha256": "f4a9fd9409c03db0521640402a6ba02040b13c3145fc2ff101c984fb6c39e6f2"
+    },
+    {
+      "path": "gr00t/data/utils.py",
+      "sha256": "bbb1d9e1f8c1dfcf484ee79f11e8c5ad45c32fed529ffc4803420f9040fc176f"
+    },
+    {
+      "path": "gr00t/deployment/__init__.py",
+      "sha256": "b670d11e09c3c14fc86a49a28c6f59acae4fe3529e4485bbf7c49dcd9147288c"
+    },
+    {
+      "path": "gr00t/deployment/modes.py",
+      "sha256": "bbf603116ce7562f5cf388a0799ec8f2bdcdc7cbc1813415ddf73d9a2e7f57ae"
+    },
+    {
+      "path": "gr00t/eval/run_gr00t_server.py",
+      "sha256": "1f4530706a2f5ae26e65021e728e507ea6887beaa621dd40476cc9d2c551a3d5"
+    },
+    {
+      "path": "gr00t/experiment/__init__.py",
+      "sha256": "c4dc0cf54a15db963e684ed996a7ceb38a3737390327929f05930ac903f33514"
+    },
+    {
+      "path": "gr00t/experiment/dist_utils.py",
+      "sha256": "d74f2e81b3e0700fe94e8e236007a9b05f732bb66b693eece02d9935a036f15e"
+    },
+    {
+      "path": "gr00t/model/__init__.py",
+      "sha256": "c8285a55bed73f760502b37034f59eba80610555d2ec5a49b027bd78fdb64e97"
+    },
+    {
+      "path": "gr00t/model/base/model_pipeline.py",
+      "sha256": "dd2617baff30ea45183fe551f0a7e8839637751549bad4ce2f0fb282715f81b6"
+    },
+    {
+      "path": "gr00t/model/gr00t_n1d7/__init__.py",
+      "sha256": "c4dc0cf54a15db963e684ed996a7ceb38a3737390327929f05930ac903f33514"
+    },
+    {
+      "path": "gr00t/model/gr00t_n1d7/gr00t_n1d7.py",
+      "sha256": "44acc2303e178ba7434fcdb5526fb6d0d3cdbc77de28bf4bcfa26b34fbd3cc5f"
+    },
+    {
+      "path": "gr00t/model/gr00t_n1d7/image_augmentations.py",
+      "sha256": "6bee966337fff49296b895fa529f9953dee301ba007503aed27e16907e236964"
+    },
+    {
+      "path": "gr00t/model/gr00t_n1d7/processing_gr00t_n1d7.py",
+      "sha256": "5c264333f86a033a07ac8d61ec02592a9806eb544f6716a2393b7694377f4cfd"
+    },
+    {
+      "path": "gr00t/model/gr00t_n1d7/setup.py",
+      "sha256": "9654e12a96aefecfbe74cb30384e3b0dd9a54314ba9c2e01c2947c192c567b07"
+    },
+    {
+      "path": "gr00t/model/modules/__init__.py",
+      "sha256": "8d39b2b127a2f9b08581fb05a0f3099e1490d3cb83a25e7140a768d416e7aaf7"
+    },
+    {
+      "path": "gr00t/model/modules/dit.py",
+      "sha256": "760263b902bce13da8c40aa83777875d1656a112ccb92603f0fe215dbc672329"
+    },
+    {
+      "path": "gr00t/model/modules/embodiment_conditioned_mlp.py",
+      "sha256": "54b9f19f84bf8735f4a9cf87188a494829c492d7d65b7d803d80a1734363666b"
+    },
+    {
+      "path": "gr00t/model/modules/qwen3_backbone.py",
+      "sha256": "c0f0456ae71af6ab4100cc51682f1e088fa05f24887313136b502cd3c2527be3"
+    },
+    {
+      "path": "gr00t/model/registry.py",
+      "sha256": "665a57055e9351eae8084bebfb8a32835fbe5231395c047a6f1520853d20fd4e"
+    },
+    {
+      "path": "gr00t/policy/__init__.py",
+      "sha256": "34a63218deecd2a4318af43ce5606c231b4b8629df434381012d1b9ddfe1e1fe"
+    },
+    {
+      "path": "gr00t/policy/gr00t_policy.py",
+      "sha256": "e0007f85d6bbf9d99c3c63f86966e004708b768915bf30218b282b774d4196f9"
+    },
+    {
+      "path": "gr00t/policy/policy.py",
+      "sha256": "b53326aee0c26ea34201d70510ad92608a96929d7f39039f578c3d865446de23"
+    },
+    {
+      "path": "gr00t/policy/replay_policy.py",
+      "sha256": "86b16108e59b2e2ae53fe4830c4398f0977643ec6c9a4c4ce39c555d8ba8c854"
+    },
+    {
+      "path": "gr00t/policy/server_client.py",
+      "sha256": "c0d566ae024bec19095a9a1c0749602a2c42b1408516e7c350788e456dca7256"
+    },
+    {
+      "path": "gr00t/utils/initial_actions.py",
+      "sha256": "c22736e8edc856be85b33b4cae3cec1ba00c69768ff76abb99cd521f404724d4"
+    },
+    {
+      "path": "gr00t/utils/video_utils.py",
+      "sha256": "fa4422b4757f5b99d4a8b1dfaadfdae78d67fa1c952c53dbf973b39d96384b9a"
+    }
+  ]
+}

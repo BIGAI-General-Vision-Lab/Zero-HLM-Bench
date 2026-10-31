@@ -1,0 +1,90 @@
+{
+  "schema_version": 1,
+  "task": "task1",
+  "name": "Walk, pick and place",
+  "evaluator": "scripts/imitation_learning/robomimic/evaluate_task1.py",
+  "protocol": "configs/protocol/shared",
+  "env": {
+    "TASK1_SCENE_USD_PATH": "{root}/assets/shared/scenes/task12.usdc",
+    "TASK1_ASSETS_ROOT": "{root}/assets/task1",
+    "TASK1_ROBOT_VISUAL_USD_PATH": "{root}/assets/task1/robot.usdc"
+  },
+  "args": {
+    "--headless": true,
+    "--device": "cuda:0",
+    "--model_name": "sim",
+    "--embodiment": "unitree_g1_sonic",
+    "--seed": 0,
+    "--num_envs": 1,
+    "--fallback_env_counts": [
+      1
+    ],
+    "--no-resume": true,
+    "--max_control_steps": 2000,
+    "--chunk_horizon": 16,
+    "--gripper_state_source": "command_binary",
+    "--gr00t_timeout_ms": 120000,
+    "--models_dir": "{root}/assets/shared/sonic",
+    "--gs_scene_path": "{root}/assets/task1/assets/GS_Assets/B1_0716_aligned_0711.ply",
+    "--gs_backend": "auto",
+    "--gs_foreground_mode": "isaac_mesh",
+    "--headcam_extrinsic_mode": "task_cfg",
+    "--headcam_calib": "{root}/assets/task1/assets/calibration/111_final_ex_0511.json",
+    "--camera_warmup_renders": 10,
+    "--two_d_gs_real2sim_root": "{root}/runtime/submodule/2D_GS/Real2Sim",
+    "--init_joint_state_json": "{root}/assets/task1/assets/evaluation/task1_initial_body_pose_episode_000000.json",
+    "--init_joint_state_mode": "episode_first_frame",
+    "--vector_env_spacing": 20,
+    "--log_every": 100,
+    "--gs_apply_training_color_match": true,
+    "--source_initial_state_json": "{root}/configs/manifests/task1_heldout100_independent_xy5cm_source_initial_states.json",
+    "--diagnostic_video_interval": 10
+  },
+  "manifest": {
+    "path": "configs/manifests/task1_heldout100_independent_xy5cm.jsonl",
+    "rows": 100,
+    "sha256": "8146cbc94fdcedd379cac1f9af57a30c1ffc266e552be47fa76f3d861c1286a1"
+  },
+  "integrity": [
+    {
+      "path": "configs/manifests/task1_heldout100_independent_xy5cm_contract.json",
+      "sha256": "b5b42e10712e8c56ec58c36387032ee09e640d3e2340cc53e95e9170db2e4464"
+    },
+    {
+      "path": "configs/manifests/task1_heldout100_independent_xy5cm_source_initial_states.json",
+      "sha256": "6bdaa86a91e9da1d6845c0d92e6b94dbade6046b0649f852794b32db0ef9392c"
+    },
+    {
+      "path": "configs/protocol/shared/processor_config.json",
+      "sha256": "842f45d252cd472b0126bd7b3ffa5441609e012e11d0d0bcaa9541a7c6a47bcb"
+    }
+  ],
+  "external_assets": [
+    "assets/task1/assets/usd/assets/Isaac/Grid/default_environment.usd",
+    "assets/task1/assets/usd/assets/Isaac/Grid/Materials/Textures/Wireframe_blue.png",
+    "assets/task1/assets/usd/assets/Isaac/Grid/Materials/Textures/WireframeBlur_basecolor.png",
+    "assets/task1/assets/usd/assets/Isaac/Grid/Materials/Textures/WireframeBlur_blue.png"
+  ],
+  "required_paths": [
+    "{root}/assets/shared/sonic/model_decoder.onnx",
+    "{root}/assets/shared/sonic/model_encoder.onnx",
+    "{root}/assets/shared/sonic/observation_config.yaml",
+    "{root}/assets/task1/assets/GS_Assets/B1_0716_aligned_0711.ply",
+    "{root}/assets/task1/assets/calibration/111_final_ex_0511.json",
+    "{root}/runtime/submodule/2D_GS/Real2Sim",
+    "{root}/assets/task1/assets/evaluation/task1_initial_body_pose_episode_000000.json",
+    "{root}/configs/manifests/task1_heldout100_independent_xy5cm_source_initial_states.json",
+    "{root}/assets/shared/scenes/task12.usdc",
+    "{root}/assets/task1/robot.usdc",
+    "{root}/assets/task1/assets/usd/assets/two_banana/two_banana_scaled_centered.usd",
+    "{root}/assets/task1/assets/usd/assets/2_floor_basket/basket_color_matched_real_zscale_1p15.usd",
+    "{root}/assets/task1/assets/usd/assets/Isaac/Grid/default_environment.usd",
+    "{root}/assets/task1/assets/usd/assets/Isaac/Grid/Materials/Textures/Wireframe_blue.png",
+    "{root}/assets/task1/assets/usd/assets/Isaac/Grid/Materials/Textures/WireframeBlur_basecolor.png",
+    "{root}/assets/task1/assets/usd/assets/Isaac/Grid/Materials/Textures/WireframeBlur_blue.png"
+  ],
+  "scene_assets": {
+    "path": "configs/scene_assets.json",
+    "sha256": "028576c08c303bbd580b6a3d2d0cc5dbfed65157643ecc9b896be3e513c5f0e0"
+  }
+}

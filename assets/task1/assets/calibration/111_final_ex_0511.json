@@ -1,0 +1,73 @@
+{
+  "schema": "camera_extrinsic_relative_to_robot_root_v1",
+  "saved_at": "2026-05-11 18:13:30 +0800",
+  "source": "calibrate_root_camera_extrinsic.py",
+  "camera_prim_path": "/World/envs/env_.*/robot/d455_link/d455_Color_link/head_camera",
+  "camera_intrinsics": {
+    "width": 640,
+    "height": 480,
+    "fx": 387.1702575683594,
+    "fy": 386.6981506347656,
+    "cx": 324.482177734375,
+    "cy": 243.91378784179688,
+    "K": [
+      [
+        387.1702575683594,
+        0.0,
+        324.482177734375
+      ],
+      [
+        0.0,
+        386.6981506347656,
+        243.91378784179688
+      ],
+      [
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "distortion": {
+      "model": "inverse_brown_conrady",
+      "coeffs": [
+        -0.05635708570480347,
+        0.06438391655683517,
+        0.00016456116281915456,
+        0.0004172333574388176,
+        -0.020993608981370926
+      ]
+    }
+  },
+  "relative_position_root_xyz": [
+    0.10272705342335438,
+    -0.001569925863576108,
+    0.47749211093087085
+  ],
+  "relative_quat_root_wxyz": [
+    0.9428805415260758,
+    -0.013300821165119991,
+    0.3327389202793267,
+    0.00917515662948099
+  ],
+  "initial_extrinsic_file": "camera_extrinsic_root.json",
+  "initial_relative_position_root_xyz": [
+    0.04802208692051666,
+    0.001939584783057423,
+    0.45242893695730657
+  ],
+  "initial_relative_quat_root_wxyz": [
+    0.9644628004574879,
+    0.00420704374743905,
+    0.2638053978837178,
+    -0.014160486009335728
+  ],
+  "camera_extrinsic_meaning": "T_root_camera: camera pose expressed in robot root frame.",
+  "reprojection_error_rms_px": 12.733554002092227,
+  "reprojection_error_mean_px": 10.876426323950467,
+  "reprojection_error_median_px": 9.82084350965466,
+  "reprojection_error_max_px": 48.786910339037746,
+  "num_inlier_frames": 52,
+  "num_correspondences": 385,
+  "use_distortion": true,
+  "note": "relative_* is T_root_camera. Projection uses inverse(T_root_camera) and IsaacLab-camera to OpenCV conversion."
+}

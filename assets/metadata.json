@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "external_assets_manifest": "configs/external_assets.json",
+  "external_asset_distribution": "external_download",
+  "shared_assets": {
+    "task1_task2_scene": "assets/shared/scenes/task12.usdc",
+    "sonic_controller": {
+      "root": "assets/shared/sonic",
+      "files": [
+        "assets/shared/sonic/model_decoder.onnx",
+        "assets/shared/sonic/model_encoder.onnx",
+        "assets/shared/sonic/observation_config.yaml",
+        "assets/shared/sonic/observation_config_low_latency.yaml",
+        "assets/shared/sonic/observation_config_sonic_release.yaml"
+      ]
+    }
+  },
+  "source_package_excludes": [
+    "assets/task1/assets/usd/assets/Isaac/Grid/default_environment.usd",
+    "assets/task1/assets/usd/assets/Isaac/Grid/Materials/Textures/Wireframe_blue.png",
+    "assets/task1/assets/usd/assets/Isaac/Grid/Materials/Textures/WireframeBlur_basecolor.png",
+    "assets/task1/assets/usd/assets/Isaac/Grid/Materials/Textures/WireframeBlur_blue.png"
+  ]
+}

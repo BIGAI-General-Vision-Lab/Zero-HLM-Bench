@@ -1,0 +1,119 @@
+{
+  "processor_kwargs": {
+    "modality_configs": {
+      "unitree_g1_sonic": {
+        "video": {
+          "delta_indices": [
+            0
+          ],
+          "modality_keys": [
+            "ego_view"
+          ],
+          "sin_cos_embedding_keys": null,
+          "mean_std_embedding_keys": null,
+          "action_configs": null
+        },
+        "state": {
+          "delta_indices": [
+            0
+          ],
+          "modality_keys": [
+            "left_q",
+            "right_q",
+            "left_hand_gripper",
+            "right_hand_gripper",
+            "waist",
+            "left_leg",
+            "right_leg",
+            "projected_gravity"
+          ],
+          "sin_cos_embedding_keys": null,
+          "mean_std_embedding_keys": null,
+          "action_configs": null
+        },
+        "action": {
+          "delta_indices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            30,
+            31,
+            32,
+            33,
+            34,
+            35,
+            36,
+            37,
+            38,
+            39
+          ],
+          "modality_keys": [
+            "sonic_token",
+            "left_hand_gripper",
+            "right_hand_gripper"
+          ],
+          "sin_cos_embedding_keys": null,
+          "mean_std_embedding_keys": null,
+          "action_configs": [
+            {
+              "rep": "ABSOLUTE",
+              "type": "NON_EEF",
+              "format": "DEFAULT",
+              "state_key": null
+            },
+            {
+              "rep": "ABSOLUTE",
+              "type": "NON_EEF",
+              "format": "DEFAULT",
+              "state_key": null
+            },
+            {
+              "rep": "ABSOLUTE",
+              "type": "NON_EEF",
+              "format": "DEFAULT",
+              "state_key": null
+            }
+          ]
+        },
+        "language": {
+          "delta_indices": [
+            0
+          ],
+          "modality_keys": [
+            "annotation.human.action.task_description"
+          ],
+          "sin_cos_embedding_keys": null,
+          "mean_std_embedding_keys": null,
+          "action_configs": null
+        }
+      }
+    }
+  }
+}

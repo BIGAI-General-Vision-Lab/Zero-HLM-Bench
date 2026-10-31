@@ -1,0 +1,738 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+"""Gr00t Policy implementation for inference.
+
+This module provides the core policy classes for running Gr00t models:
+- Gr00tPolicy: Base policy class for model inference
+- Gr00tSimPolicyWrapper: Wrapper for compatibility with existing Gr00t simulation environments
+"""
+
+from pathlib import Path
+from typing import Any
+
+import numpy as np
+import torch
+from transformers import AutoModel, AutoProcessor
+
+from gr00t.data.embodiment_tags import FINETUNE_ONLY_TAGS, POSTTRAIN_TAGS, EmbodimentTag
+from gr00t.data.interfaces import BaseProcessor
+from gr00t.data.types import MessageType, ModalityConfig, VLAStepData
+
+from .policy import BasePolicy, PolicyWrapper
+
+
+def _rec_to_dtype(x: Any, dtype: torch.dtype) -> Any:
+    """Recursively convert all floating point tensors in a nested structure to the given dtype.
+
+    Args:
+        x: Input data structure (tensor, dict, list, or other)
+        dtype: Target torch dtype for floating point tensors
+
+    Returns:
+        Data structure with floating point tensors converted to target dtype
+
+    Warning:
+        Non-floating point tensors will be left as is.
+    """
+    if isinstance(x, torch.Tensor) and torch.is_floating_point(x):
+        return x.to(dtype=dtype)
+    
+    elif isinstance(x, dict) or hasattr(x, "items"):
+        return {k: _rec_to_dtype(v, dtype) for k, v in x.items()}  
+    elif isinstance(x, list):
+        return [_rec_to_dtype(v, dtype) for v in x]
+    else:
+        return x
+
+
+class Gr00tPolicy(BasePolicy):
+    """Core policy class for Gr00t model inference.
+
+    This policy handles the end-to-end inference pipeline:
+    1. Validates input observations
+    2. Processes observations with pretrained VLA processor
+    3. Runs model inference
+    4. Decodes and returns actions
+
+    The policy expects observations with specific modalities (video, state, language)
+    and returns actions in the format defined by the model's modality configuration.
+    """
+
+    def __init__(
+        self,
+        embodiment_tag: EmbodimentTag | str,
+        model_path: str,
+        *,
+        device: int | str,
+        strict: bool = True,
+    ):
+        """Initialize the Gr00t Policy.
+
+        Args:
+            embodiment_tag: The embodiment tag defining the robot/environment type.
+                Accepts an EmbodimentTag enum or a string (resolved case-insensitively).
+            model_path: Path to the pretrained model checkpoint directory
+            device: Device to run the model on (e.g., 'cuda:0', 0, 'cpu')
+            strict: Whether to enforce strict input validation (default: True)
+        """
+        
+        import gr00t.model  
+
+        super().__init__(strict=strict)
+        if isinstance(embodiment_tag, str):
+            embodiment_tag = EmbodimentTag.resolve(embodiment_tag)
+        model_dir = Path(model_path)
+
+        
+        model = AutoModel.from_pretrained(model_dir)
+        model.eval()  
+        model.to(device=device, dtype=torch.bfloat16)
+        self.model = model
+
+        
+        
+        
+        
+        processor_dir = (
+            model_dir / "processor"
+            if (model_dir / "processor").is_dir()
+            and not (model_dir / "processor_config.json").exists()
+            else model_dir
+        )
+        self.processor: BaseProcessor = AutoProcessor.from_pretrained(processor_dir)
+        self.processor.eval()
+
+        
+        self.embodiment_tag = embodiment_tag
+        all_modality_configs = self.processor.get_modality_configs()
+        if self.embodiment_tag.value not in all_modality_configs:
+            
+            supported_lines = []
+            for tag_value in sorted(all_modality_configs.keys()):
+                enum_name = EmbodimentTag.reverse_lookup(tag_value)
+                if enum_name != tag_value:
+                    supported_lines.append(f"  {enum_name:30s} (--embodiment-tag {enum_name})")
+                else:
+                    supported_lines.append(f"  {tag_value:30s} (internal, no public enum)")
+            supported_str = "\n".join(supported_lines)
+
+            hint = ""
+            if self.embodiment_tag in POSTTRAIN_TAGS:
+                hint = (
+                    f"\n\nHint: '{self.embodiment_tag.name}' is a posttrain tag that requires "
+                    f"a finetuned checkpoint, not the base model. "
+                    f"See the example READMEs for how to finetune and download checkpoints."
+                )
+            elif self.embodiment_tag in FINETUNE_ONLY_TAGS:
+                hint = (
+                    f"\n\nHint: '{self.embodiment_tag.name}' is for finetuning custom robots. "
+                    f"Use it with launch_finetune.py, not with the base model directly."
+                )
+
+            raise ValueError(
+                f"Embodiment tag '{self.embodiment_tag.name}' "
+                f"(value='{self.embodiment_tag.value}') is not supported "
+                f"by this checkpoint.\n\n"
+                f"Supported tags in this checkpoint:\n{supported_str}"
+                f"{hint}"
+            )
+        self.modality_configs = {
+            k: v
+            for k, v in all_modality_configs[self.embodiment_tag.value].items()
+            if k != "rl_info"
+        }
+        self.collate_fn = self.processor.collator
+
+        
+        
+        
+        language_keys = self.modality_configs["language"].modality_keys
+        language_delta_indices = self.modality_configs["language"].delta_indices
+        assert len(language_keys) >= 1, "At least one language key is required"
+        assert len(language_delta_indices) == 1, "Only one language delta index is supported"
+        self.language_key = language_keys[0]
+
+    def _unbatch_observation(self, value: dict[str, Any]) -> list[dict[str, Any]]:
+        """Unbatch a batched observation into a list of single observations.
+
+        Args:
+            value: Batched observation with shape (B, ...) for each modality
+
+        Returns:
+            List of B observations, each with the batch dimension removed
+        """
+        unbatched_obs = []
+        
+        batch_size = value["video"][list(value["video"].keys())[0]].shape[0]
+
+        
+        for i in range(batch_size):
+            unbatched_value = {
+                "video": {k: v[i] for k, v in value["video"].items()},
+                "state": {k: v[i] for k, v in value["state"].items()},
+                "language": {k: v[i] for k, v in value["language"].items()},
+            }
+            unbatched_obs.append(unbatched_value)
+        return unbatched_obs
+
+    def _to_vla_step_data(self, observation: dict[str, Any]) -> VLAStepData:
+        """Convert a single observation into a VLAStepData object for processing.
+
+        Args:
+            observation: Single observation dict with video, state, and language
+
+        Returns:
+            VLAStepData object ready for processor input
+        """
+        return VLAStepData(
+            images=observation["video"],
+            states=observation["state"],
+            actions={},  
+            text=observation["language"][self.language_key][0],
+            embodiment=self.embodiment_tag,
+        )
+
+    def check_observation(self, observation: dict[str, Any]) -> None:
+        """Validate that the observation has the correct structure and types.
+
+        This method ensures that all required modalities are present and that their
+        data types, shapes, and dimensions match the model's expectations.
+
+        Expected observation structure:
+            - video: dict[str, np.ndarray[np.uint8, (B, T, H, W, C)]]
+                - B: batch size
+                - T: temporal horizon (number of frames)
+                - H, W: image height and width
+                - C: number of channels (must be 3 for RGB)
+            - state: dict[str, np.ndarray[np.float32, (B, T, D)]]
+                - B: batch size
+                - T: temporal horizon (number of state observations)
+                - D: state dimension
+            - language: dict[str, list[list[str]]]
+                - Shape: (B, T) where each element is a string
+                - T: temporal horizon (typically 1 for language)
+
+        Args:
+            observation: Dictionary containing video, state, and language modalities
+
+        Raises:
+            AssertionError: If any validation check fails
+        """
+        
+        for modality in ["video", "state", "language"]:
+            assert modality in observation, f"Observation must contain a '{modality}' key"
+            assert isinstance(observation[modality], dict), (
+                f"Observation '{modality}' must be a dictionary. Got {type(observation[modality])}: {observation[modality]}"
+            )
+
+        
+        bs = -1
+
+        
+        
+        for video_key in self.modality_configs["video"].modality_keys:
+            assert video_key in observation["video"], (
+                f"Video key '{video_key}' must be in observation"
+            )
+
+            
+            if bs == -1:
+                bs = len(observation["video"][video_key])
+            else:
+                assert len(observation["video"][video_key]) == bs, (
+                    f"Video key '{video_key}' must have batch size {bs}. Got {len(observation['video'][video_key])}"
+                )
+
+            batched_video = observation["video"][video_key]
+
+            
+            assert isinstance(batched_video, np.ndarray), (
+                f"Video key '{video_key}' must be a numpy array. Got {type(batched_video)}"
+            )
+
+            
+            assert batched_video.dtype == np.uint8, (
+                f"Video key '{video_key}' must be a numpy array of type np.uint8. Got {batched_video.dtype}"
+            )
+
+            
+            assert batched_video.ndim == 5, (
+                f"Video key '{video_key}' must be a numpy array of shape (B, T, H, W, C), got {batched_video.shape}"
+            )
+
+            
+            assert batched_video.shape[1] == len(self.modality_configs["video"].delta_indices), (
+                f"Video key '{video_key}'s horizon must be {len(self.modality_configs['video'].delta_indices)}. Got {batched_video.shape[1]}"
+            )
+
+            
+            assert batched_video.shape[-1] == 3, (
+                f"Video key '{video_key}'s channel 'C' must be 3. Got {batched_video.shape[-1]}"
+            )
+
+        
+        
+        for state_key in self.modality_configs["state"].modality_keys:
+            
+            
+            assert state_key in observation["state"], (
+                f"State key '{state_key}' must be in observation"
+            )
+
+            
+            if bs == -1:
+                bs = len(observation["state"][state_key])
+            else:
+                assert len(observation["state"][state_key]) == bs, (
+                    f"State key '{state_key}' must have batch size {bs}. Got {len(observation['state'][state_key])}"
+                )
+
+            batched_state = observation["state"][state_key]
+
+            
+            assert isinstance(batched_state, np.ndarray), (
+                f"State key '{state_key}' must be a numpy array. Got {type(batched_state)}"
+            )
+
+            
+            assert batched_state.dtype == np.float32, (
+                f"State key '{state_key}' must be a numpy array of type np.float32. Got {batched_state.dtype}"
+            )
+
+            
+            assert batched_state.ndim == 3, (
+                f"State key '{state_key}' must be a numpy array of shape (B, T, D), got {batched_state.shape}"
+            )
+
+            
+            assert batched_state.shape[1] == len(self.modality_configs["state"].delta_indices), (
+                f"State key '{state_key}'s horizon must be {len(self.modality_configs['state'].delta_indices)}. Got {batched_state.shape[1]}"
+            )
+
+        
+        
+        for language_key in self.modality_configs["language"].modality_keys:
+            
+            
+            assert language_key in observation["language"], (
+                f"Language key '{language_key}' must be in observation"
+            )
+
+            
+            if bs == -1:
+                bs = len(observation["language"][language_key])
+            else:
+                assert len(observation["language"][language_key]) == bs, (
+                    f"Language key '{language_key}' must have batch size {bs}. Got {len(observation['language'][language_key])}"
+                )
+
+            batched_language: list[list[str]] = observation["language"][language_key]
+
+            
+            assert isinstance(batched_language, list), (
+                f"Language key '{language_key}' must be a list. Got {type(batched_language)}"
+            )
+
+            
+            for batch_item in batched_language:
+                
+                assert len(batch_item) == len(self.modality_configs["language"].delta_indices), (
+                    f"Language key '{language_key}'s horizon must be {len(self.modality_configs['language'].delta_indices)}. Got {len(batched_language)}"
+                )
+
+                
+                assert isinstance(batch_item, list), (
+                    f"Language batch item must be a list. Got {type(batch_item)}"
+                )
+
+                
+                assert len(batch_item) == 1, (
+                    f"Language batch item must have exactly one item. Got {len(batch_item)}"
+                )
+
+                
+                assert isinstance(batch_item[0], str), (
+                    f"Language batch item must be a string. Got {type(batch_item[0])}"
+                )
+
+    def _get_action(
+        self, observation: dict[str, Any], options: dict[str, Any] | None = None
+    ) -> tuple[dict[str, Any], dict[str, Any]]:
+        """Internal method to compute actions from observations.
+
+        Pipeline:
+        1. Unbatch observations into individual samples
+        2. Convert each to VLAStepData and process
+        3. Collate into model input batch
+        4. Run model inference
+        5. Decode and unnormalize actions
+
+        Args:
+            observation: Batched observation dictionary
+            options: Optional parameters (currently unused)
+
+        Returns:
+            Tuple of (actions_dict, info_dict)
+        """
+        
+        unbatched_observations = self._unbatch_observation(observation)
+        processed_inputs = []
+
+        
+        states = []
+        for obs in unbatched_observations:
+            vla_step_data = self._to_vla_step_data(obs)
+            states.append(vla_step_data.states)  
+            messages = [{"type": MessageType.EPISODE_STEP.value, "content": vla_step_data}]
+            processed_inputs.append(self.processor(messages))
+
+        
+        collated_inputs = self.collate_fn(processed_inputs)
+        collated_inputs = _rec_to_dtype(collated_inputs, dtype=torch.bfloat16)
+
+        
+        with torch.inference_mode():
+            model_pred = self.model.get_action(**collated_inputs)
+        normalized_action = model_pred["action_pred"].float()
+
+        
+        batched_states = {}
+        for k in self.modality_configs["state"].modality_keys:
+            batched_states[k] = np.stack([s[k] for s in states], axis=0)  
+        unnormalized_action = self.processor.decode_action(
+            normalized_action.cpu().numpy(), self.embodiment_tag, batched_states
+        )
+
+        
+        casted_action = {
+            key: value.astype(np.float32) for key, value in unnormalized_action.items()
+        }
+        return casted_action, {}
+
+    def check_action(self, action: dict[str, Any]) -> None:
+        """Validate that the action has the correct structure and types.
+
+        This method ensures that all required action keys are present and that their
+        data types, shapes, and dimensions match the model's action space.
+
+        Expected action structure:
+            - action: dict[str, np.ndarray[np.float32, (B, T, D)]]
+                - B: batch size
+                - T: action horizon (number of future action steps)
+                - D: action dimension (e.g., joint positions, velocities, gripper state)
+
+        Args:
+            action: Dictionary containing action arrays for each action key
+
+        Raises:
+            AssertionError: If any validation check fails
+        """
+        
+        for action_key in self.modality_configs["action"].modality_keys:
+            
+            assert action_key in action, f"Action key '{action_key}' must be in action"
+
+            action_arr = action[action_key]
+
+            
+            assert isinstance(action_arr, np.ndarray), (
+                f"Action key '{action_key}' must be a numpy array. Got {type(action_arr)}"
+            )
+
+            
+            assert action_arr.dtype == np.float32, (
+                f"Action key '{action_key}' must be a numpy array of type np.float32. Got {action_arr.dtype}"
+            )
+
+            
+            assert action_arr.ndim == 3, (
+                f"Action key '{action_key}' must be a numpy array of shape (B, T, D), got {action_arr.shape}"
+            )
+
+            
+            assert action_arr.shape[1] == len(self.modality_configs["action"].delta_indices), (
+                f"Action key '{action_key}'s horizon must be {len(self.modality_configs['action'].delta_indices)}. Got {action_arr.shape[1]}"
+            )
+
+    def get_modality_config(self) -> dict[str, ModalityConfig]:
+        return self.modality_configs
+
+    def reset(self, options: dict[str, Any] | None = None) -> dict[str, Any]:
+        """Reset the policy to its initial state.
+
+        Args:
+            options: Dictionary containing the options for the reset
+
+        Returns:
+            Dictionary containing the info after resetting the policy
+        """
+        return {}
+
+
+class Gr00tSimPolicyWrapper(PolicyWrapper):
+    """Wrapper for Gr00tPolicy to enable compatibility with existing Gr00t simulation environments.
+
+    This wrapper is specifically designed for retro-fitting the Gr00t policy with the current
+    Gr00t simulation environment interface. It handles the transformation between the flat
+    observation format used by Gr00t sim environments (with keys like 'video.camera_name',
+    'state.joint_positions') and the nested format expected by Gr00tPolicy.
+
+    **Important**: If you are using other environments, custom robots, or building new environments,
+    you should use `Gr00tPolicy` directly and format your observations according to its interface.
+    This wrapper is only needed for compatibility with the existing Gr00t sim infrastructure.
+
+    Key transformations performed by this wrapper:
+    - Observation keys: 'video.cam' -> observation['video']['cam']
+    - Observation keys: 'state.joints' -> observation['state']['joints']
+    - Language keys: 'task' or 'annotation.human.coarse_action' -> observation['language']['task']
+    - Action keys: action['joints'] -> 'action.joints'
+    """
+
+    def __init__(self, policy: Gr00tPolicy, *, strict: bool = True):
+        """Initialize the wrapper around a Gr00tPolicy instance.
+
+        Args:
+            policy: The Gr00tPolicy instance to wrap
+            strict: Whether to enforce strict validation (default: True)
+        """
+        super().__init__(policy, strict=strict)
+        self.policy: Gr00tPolicy = policy
+        assert len(self.policy.modality_configs["language"].delta_indices) == 1, (
+            "Only one language delta index is supported"
+        )
+
+    def check_observation(self, observation: dict[str, Any]) -> None:
+        """Validate observation from Gr00t sim environment format.
+
+        This validation is specific to the flat observation format used by Gr00t sim environments.
+        Unlike Gr00tPolicy.check_observation which expects nested dicts, this expects flat keys.
+
+        Expected observation structure (Gr00t sim format):
+            - Flat keys like 'video.camera_name': np.ndarray[np.uint8, (B, T, H, W, C)]
+            - Flat keys like 'state.state_name': np.ndarray[np.float32, (B, T, D)]
+            - Language keys: tuple[str] or list[str] with shape (B,)
+                - Key can be 'task' or 'annotation.human.coarse_action' (for DC envs)
+
+        Args:
+            observation: Flat observation dictionary from Gr00t sim environment
+
+        Raises:
+            AssertionError: If any validation check fails
+        """
+        modality_configs = self.get_modality_config()
+
+        
+        
+        for video_key in modality_configs["video"].modality_keys:
+            
+            parsed_key = f"video.{video_key}"
+            assert parsed_key in observation, f"Video key '{parsed_key}' must be in observation"
+
+            batched_video = observation[parsed_key]
+
+            
+            assert isinstance(batched_video, np.ndarray), (
+                f"Video key '{video_key}' must be a numpy array. Got {type(batched_video)}"
+            )
+
+            
+            assert batched_video.dtype == np.uint8, (
+                f"Video key '{video_key}' must be a numpy array of type np.uint8. Got {batched_video.dtype}"
+            )
+
+            
+            assert batched_video.ndim == 5, (
+                f"Video key '{video_key}' must be a numpy array of shape (B, T, H, W, C), got {batched_video.shape}"
+            )
+
+            
+            assert batched_video.shape[1] == len(modality_configs["video"].delta_indices), (
+                f"Video key '{video_key}'s horizon must be {len(modality_configs['video'].delta_indices)}. Got {batched_video.shape[1]}"
+            )
+
+            
+            assert batched_video.shape[-1] == 3, (
+                f"Video key '{video_key}'s channel 'C' must be 3. Got {batched_video.shape[-1]}"
+            )
+
+        
+        
+        for state_key in modality_configs["state"].modality_keys:
+            
+            parsed_key = f"state.{state_key}"
+            assert parsed_key in observation, f"State key '{parsed_key}' must be in observation"
+
+            batched_state = observation[parsed_key]
+
+            
+            assert isinstance(batched_state, np.ndarray), (
+                f"State key '{state_key}' must be a numpy array. Got {type(batched_state)}"
+            )
+
+            
+            assert batched_state.dtype == np.float32, (
+                f"State key '{state_key}' must be a numpy array of type np.float32. Got {batched_state.dtype}"
+            )
+
+            
+            assert batched_state.ndim == 3, (
+                f"State key '{state_key}' must be a numpy array of shape (B, T, D), got {batched_state.shape}"
+            )
+
+            
+            assert batched_state.shape[1] == len(modality_configs["state"].delta_indices), (
+                f"State key '{state_key}'s horizon must be {len(modality_configs['state'].delta_indices)}. Got {batched_state.shape[1]}"
+            )
+
+        
+        
+        for language_key in modality_configs["language"].modality_keys:
+            
+            
+            if language_key == "task" and "annotation.human.coarse_action" in observation:
+                language_key = "annotation.human.coarse_action"
+            
+
+            
+            assert language_key in observation, (
+                f"Language key '{language_key}' must be in observation"
+            )
+
+            
+            batched_language: tuple[str] | list[str] = observation[language_key]  
+
+            
+            assert isinstance(batched_language, (tuple, list)), (
+                f"Language key '{language_key}' must be a tuple or list. Got {type(batched_language)}"
+            )
+
+            
+            assert isinstance(batched_language[0], str), (
+                f"Language batch item must be a string. Got {type(batched_language[0])}"
+            )
+
+    def _get_action(
+        self, observation: dict[str, Any], options: dict[str, Any] | None = None
+    ) -> tuple[dict[str, Any], dict[str, Any]]:
+        """Transform Gr00t sim observation format and compute actions.
+
+        This method transforms the flat observation format from Gr00t sim environments
+        into the nested format expected by Gr00tPolicy, computes actions, and transforms
+        them back to the flat format expected by Gr00t sim environments.
+
+        Input format (Gr00t sim):
+            - Flat keys: 'video.camera_name', 'state.state_name'
+            - Language: tuple[str] (B,)
+
+        Output format (Gr00t sim):
+            - Flat keys: 'action.action_name'
+
+        Args:
+            observation: Flat observation dictionary from Gr00t sim environment
+            options: Optional parameters (currently unused)
+
+        Returns:
+            Tuple of (flat_actions_dict, info_dict)
+        """
+        
+        new_obs = {}
+        for modality in ["video", "state", "language"]:
+            new_obs[modality] = {}
+            for key in self.policy.modality_configs[modality].modality_keys:
+                if modality == "language":
+                    
+                    if key == "task" and "annotation.human.coarse_action" in observation:
+                        parsed_key = "annotation.human.coarse_action"
+                    
+                    else:
+                        parsed_key = key
+                else:
+                    
+                    parsed_key = f"{modality}.{key}"
+
+                arr = observation[parsed_key]
+
+                
+                if modality == "language":
+                    
+                    
+                    new_obs[modality][key] = [[str(item)] for item in arr]
+                else:
+                    
+                    new_obs[modality][key] = arr
+
+        
+        action, info = self.policy.get_action(new_obs, options)
+
+        
+        
+        return {f"action.{key}": action[key] for key in action}, info
+
+    def check_action(self, action: dict[str, Any]) -> None:
+        """Validate action in Gr00t sim environment format.
+
+        This validation is specific to the flat action format used by Gr00t sim environments.
+        Unlike Gr00tPolicy.check_action which expects nested dicts, this expects flat keys.
+
+        Expected action structure (Gr00t sim format):
+            - Flat keys like 'action.action_name': np.ndarray[np.float32, (B, T, D)]
+                - B: batch size
+                - T: action horizon (number of future action steps)
+                - D: action dimension
+
+        Args:
+            action: Flat action dictionary for Gr00t sim environment
+
+        Raises:
+            AssertionError: If any validation check fails
+        """
+        modality_configs = self.get_modality_config()
+
+        
+        for action_key in modality_configs["action"].modality_keys:
+            
+            parsed_key = f"action.{action_key}"
+            assert parsed_key in action, f"Action key '{parsed_key}' must be in action"
+
+            action_arr = action[parsed_key]
+
+            
+            assert isinstance(action_arr, np.ndarray), (
+                f"Action key '{action_key}' must be a numpy array. Got {type(action_arr)}"
+            )
+
+            
+            assert action_arr.dtype == np.float32, (
+                f"Action key '{action_key}' must be a numpy array of type np.float32. Got {action_arr.dtype}"
+            )
+
+            
+            assert action_arr.ndim == 3, (
+                f"Action key '{action_key}' must be a numpy array of shape (B, T, D), got {action_arr.shape}"
+            )
+
+            
+            assert action_arr.shape[1] == len(modality_configs["action"].delta_indices), (
+                f"Action key '{action_key}'s horizon must be {len(modality_configs['action'].delta_indices)}. Got {action_arr.shape[1]}"
+            )
+
+    def get_modality_config(self) -> dict[str, ModalityConfig]:
+        """Get the modality configuration from the underlying policy.
+
+        Returns:
+            Dictionary mapping modality names to their configurations
+        """
+        return self.policy.get_modality_config()

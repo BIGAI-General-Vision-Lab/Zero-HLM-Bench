@@ -1,0 +1,519 @@
+{
+  "files": [
+    {
+      "path": "assets/shared/scenes/astra/scene.usdc",
+      "bytes": 28993325,
+      "sha256": "c28a7a6485bab74780f94b1004b4998871ba0365af9a5edc8b79fa917181157c"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_TT26_Backrest_lower_brace.png",
+      "bytes": 92894,
+      "sha256": "040378e1f87fbf9d66f392e9721af42013d60ae02b14932b4e70741cf5bd7ede"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_TT26_Blackboard_long_stile.png",
+      "bytes": 64937,
+      "sha256": "e56123705a0bd1a3b583219b01957e6a14cfb4306383f2b611fddf8abf8ecaf2"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_TT26_Blackboard_long_stile_001.png",
+      "bytes": 64937,
+      "sha256": "e56123705a0bd1a3b583219b01957e6a14cfb4306383f2b611fddf8abf8ecaf2"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_TT26_Blackboard_rail.png",
+      "bytes": 98804,
+      "sha256": "9ac2b0107aca962f37270aea27f6415eab70df18f0bc27078ec7f25c790b68d6"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_TT26_Blackboard_rail_001.png",
+      "bytes": 98809,
+      "sha256": "bea3fe9ea20a82962d1451374b16a4e8c9b394ad0c9cbf18de3332dd2bee30ff"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_TT26_Folded_pale_green_cloth.png",
+      "bytes": 12508,
+      "sha256": "b38abbe37fd98af97032318830854eeda031c13facd9ab79da04df8a2fe1a666"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_TT26_Planter_floor.png",
+      "bytes": 178942,
+      "sha256": "efb47a6f50b2da8c3e0a2965f1acc640fc15d7fdf059bd506d5a52201151d69f"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_TT26_Planter_front.png",
+      "bytes": 206154,
+      "sha256": "d105f9bd995204ca12464f7176638337a90c9abfedb4193ef48f83605fe57ac7"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_TT26_Planter_rear.png",
+      "bytes": 206151,
+      "sha256": "af70e64a4423b569867b9726a799f167c63ef87722d63eba5e891f3d30081b79"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_TT26_Planter_side.png",
+      "bytes": 230232,
+      "sha256": "c18933e855818c13821a4c8dfccb4b4f8d44dd8daf56939160627a6410f47809"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_TT26_Planter_side_001.png",
+      "bytes": 230233,
+      "sha256": "166634c31351130f186395f51161fe89c43e8e7fdc630511aaa4ff8f710df0ab"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_TT26_Stand_square_tapered_leg.png",
+      "bytes": 249277,
+      "sha256": "f353c8e7f369194629d227d1fe2fd861d65eb16d897d46ce88d12c2fc43fa541"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_TT26_Stand_square_tapered_leg_001.png",
+      "bytes": 249951,
+      "sha256": "c762532b3d60c30f0357d3d25d906b2355323dcfdde23a47bd84d1df2a710cd2"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_TT26_Stand_square_tapered_leg_002.png",
+      "bytes": 250121,
+      "sha256": "c64dd253a5af2af1ccdf4cb6d346222535792792bc8feec353c476efe3378c7e"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_TT26_Stand_square_tapered_leg_003.png",
+      "bytes": 249945,
+      "sha256": "101791e8fb66fdf1bed267e6e2adcfd66a9644ec60426dbdc5084e7cab42bcaf"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_backsplash_strip.png",
+      "bytes": 21337,
+      "sha256": "6a5c439b514943f5373cf91609ef7225fb4457bdea17c49af794eb5ca7203577"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_cabinet_door_00.png",
+      "bytes": 437715,
+      "sha256": "12955b6224f5f53436d75994113edeb60a94d37da378b9f30610dfb7baa4884c"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_cabinet_door_01.png",
+      "bytes": 437736,
+      "sha256": "b434c73e2e7abec454ad70a9462623b332a2816b26f2a85ccb9838f11e8fda7f"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_cabinet_door_03.png",
+      "bytes": 373602,
+      "sha256": "9b740d42b5c3d0935d163eb7c7fd091e125ae071e69c97d61b6ebdbf58e1b54a"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_cabinet_door_04.png",
+      "bytes": 373760,
+      "sha256": "7aa0a7eb5f2dc5295dfb10f2353fad5c13cfe07d2f906c46b3b4527a16ef1c6f"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_cabinet_door_05.png",
+      "bytes": 375305,
+      "sha256": "0cdcf447074910421299a41b6a51ff62564c25b07f49bdd78b0d3d096e7dfb8d"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_cabinet_door_06.png",
+      "bytes": 383378,
+      "sha256": "ca75719583b9a0c7a82a4938101705ea93f54f0cb9c9b8caa8c59bb75ca8e242"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_cabinet_side.png",
+      "bytes": 44388,
+      "sha256": "fecf039e31e5bced7e01d13634ea79af5ed9a7b5289e55e83e27d02fcdffef3e"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_cabinet_side_001.png",
+      "bytes": 44389,
+      "sha256": "0323bc910ec981b43c3d3f2d1bd5547f2a1de3fcd8ed3c3ba2e94c23d40206c7"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_cloth_woven_surface.png",
+      "bytes": 283725,
+      "sha256": "8a6b1e0b3d0211ac3363d82b3565073eacfacba4bcdfd09a2ca0e7802197339e"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_cloth_woven_surface_001.png",
+      "bytes": 853900,
+      "sha256": "1ee41fb057769da86e3a1f985ffa874272b48703a70d9a6df9ac31be2f4cf24e"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_curtain_north_fabric.png",
+      "bytes": 3132116,
+      "sha256": "29be7ae1719d95d012e1911c15b38a298c9a1a859f04c8faeb6f99a8a8d84bea"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_curtain_side_gray_fabric.png",
+      "bytes": 3679012,
+      "sha256": "bceabd38b7319f96e77fcf2bde46b3d6bbd052f0d31aa173fc972f23b5275331"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_curtain_west_fabric.png",
+      "bytes": 3051964,
+      "sha256": "c64ad6dbd6587848e6c6d41898be1c63579f0d9735bc7e4a27839cbbdcb018a8"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_drawer_1_front.png",
+      "bytes": 388883,
+      "sha256": "18376f96d0fcb44249b1f5708500a8c7c24c08e116c8cdb1c24dd54983764672"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_drawer_2_front.png",
+      "bytes": 438735,
+      "sha256": "305521f26e010837ea82de1cbead089809e705f4f6a0906b260ba86954709406"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_drawer_3_front.png",
+      "bytes": 452209,
+      "sha256": "f0750671a699441c6c5ce910cd65b8314da8d8de59b47268ec0e1ce1a89f1ce6"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_entry_door_leaf_slab.png",
+      "bytes": 447868,
+      "sha256": "60ffe5279284baac8aae3d249f5bbbd9fb8d5af41b00a1979e6f14d4023a3e6e"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_floor_tile_00_00.png",
+      "bytes": 133080,
+      "sha256": "66dfac35d5fd94c696ddee59ec13d2c528cd177ced1140155ccb353c52a3831d"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_floor_tile_00_01.png",
+      "bytes": 133137,
+      "sha256": "cf7f70d6b0304dcff7f39a9b16dfe6d74b6ab39374b645af7e6ed13f3148cd7d"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_floor_tile_00_02.png",
+      "bytes": 132264,
+      "sha256": "649f55966fc5401531f17ff1fe8101430b6ba18658426d1ef67eedf2cb209824"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_floor_tile_00_03.png",
+      "bytes": 132193,
+      "sha256": "8c131f4cfe294bf2f1d73af65d3032a25c96cd6f5378e88fa56262d7c062b233"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_floor_tile_00_04.png",
+      "bytes": 132954,
+      "sha256": "cf169c4c417ee7c989fe395b68d782e2c9b1d0f6c92613d08c977ea9068e8fe0"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_floor_tile_00_05.png",
+      "bytes": 132505,
+      "sha256": "66a6656ef0816c7ddba76e9681b104dfbadd222df57607a402f8ef35441585a3"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_floor_tile_00_06.png",
+      "bytes": 132542,
+      "sha256": "e583fabf1adf5b97732fe63196915321826e42e14e6e88801294e36f0d007413"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_floor_tile_01_00.png",
+      "bytes": 133061,
+      "sha256": "9a52ccb174e5d7b914ab27766d68d7f868eab7a0f498ef2a2582bdffc69f31cd"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_floor_tile_01_01.png",
+      "bytes": 132282,
+      "sha256": "6624457c9c5e8fcde8afdc97eab748abe8605242ed584521c9d6dce0c082facc"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_floor_tile_01_02.png",
+      "bytes": 133468,
+      "sha256": "80bed0251f0177522837f80f91ab494be88ad3fe67150dd4d83b169aedc3aeab"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_floor_tile_01_03.png",
+      "bytes": 132698,
+      "sha256": "7fedfb561884cb19f50704b7eef7c439c3650d0e0f942ccc03cbc7c975670cf2"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_floor_tile_01_04.png",
+      "bytes": 133341,
+      "sha256": "e89ffddfabb6dbd6c94fca9f0571385b8c2ec364011b208803212fa02123ff1e"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_floor_tile_01_05.png",
+      "bytes": 132909,
+      "sha256": "1e3093c5f932b4daf18bb8461c26af5ceec23b52bfcebbfd22262264b214f8e9"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_floor_tile_01_06.png",
+      "bytes": 132968,
+      "sha256": "cf067f8e3f7d314656cb748d8446b9b01e49ee7f78e9f7e2c067568165b7ce25"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_floor_tile_02_00.png",
+      "bytes": 133943,
+      "sha256": "0784552699d230d424c120c1107da695b2f295fa0ed1c6f32f96eb234b48ad92"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_floor_tile_02_01.png",
+      "bytes": 132443,
+      "sha256": "79d6e64df7101aae506cecd8a1e590d30f4d053e796c6441666df05b446d3485"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_floor_tile_02_02.png",
+      "bytes": 132558,
+      "sha256": "af354f50a283baa02514e91a0abdcc9088606ec730f2281e9cd0077c8ae16127"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_floor_tile_02_03.png",
+      "bytes": 131870,
+      "sha256": "aad4d09c346ac67473cc9186633cdafc553b535c33782a661634ec7ea5a26cb0"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_floor_tile_02_04.png",
+      "bytes": 133302,
+      "sha256": "5cac6502ff03e1c9898cbc6205cb41c1b1115086bd9093495f6950dc475a032d"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_floor_tile_02_05.png",
+      "bytes": 132629,
+      "sha256": "7135f956ee102c1b4d1c9f93299841f1d7ce1d39f1727628f879d7d829a936c0"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_floor_tile_02_06.png",
+      "bytes": 133045,
+      "sha256": "da36d8da9d118d7b30824796583dfed7e662728522b0ba92bc32b6012d307fe6"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_floor_tile_03_00.png",
+      "bytes": 132532,
+      "sha256": "73274e17476d6bc7b22517cc4e3a238c4d2685280931312c58526e1a63dbd7d7"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_floor_tile_03_01.png",
+      "bytes": 133417,
+      "sha256": "03db800aac4d958725dc5d4f4f471263ed725a636d1652af804cdecdffec4628"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_floor_tile_03_02.png",
+      "bytes": 133202,
+      "sha256": "5e0c0d29353e8a90a4f00724adcda0f0cc44f98d6298b13dbe788a627f9f22b0"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_floor_tile_03_03.png",
+      "bytes": 132335,
+      "sha256": "9d81fd40c92de7212eb810e917bcccd45b8fed4bb05e730b806793821b7fcfd5"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_floor_tile_03_04.png",
+      "bytes": 133485,
+      "sha256": "810857ef38d9176d90437944d996f804212599d46129819d0da494828985e9af"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_floor_tile_03_05.png",
+      "bytes": 132731,
+      "sha256": "6b92ed8e9b3ce30e210ddae7e5ece4d4c7a75f143047a1ed3b799f119cda7531"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_floor_tile_03_06.png",
+      "bytes": 132685,
+      "sha256": "cb6af2f746d136d084005be1e46df4d488ac1462727d48b8af58d850e151f77c"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_floor_tile_04_00.png",
+      "bytes": 132265,
+      "sha256": "52aa5685bdb66ccf632662cbbfac5f2342a6a93d72fb782759654c209ea6788f"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_floor_tile_04_01.png",
+      "bytes": 132809,
+      "sha256": "9c289d104f499b15e9e177bc134a260c19963991541ece699c11ae05cef1f0b4"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_floor_tile_04_02.png",
+      "bytes": 133219,
+      "sha256": "3c795ce28e93d1d9c1baa355e7cf8d01959bf762bf3f79582da36784ededf0b8"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_floor_tile_04_03.png",
+      "bytes": 132319,
+      "sha256": "b00f566b175a67af599b7d40f987ae18fac76699328fd885c159cc04b9f8c620"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_floor_tile_04_04.png",
+      "bytes": 133763,
+      "sha256": "427c6ebab8b5148559b2f7f9df0e9cae082522a9b4ebd5a976d59a6fe3cd5fb7"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_floor_tile_04_05.png",
+      "bytes": 132606,
+      "sha256": "e3e29835c615fea0327164da0c63a45f18bf9b6a2822f8993473538d67793a91"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_floor_tile_04_06.png",
+      "bytes": 132229,
+      "sha256": "75fb88c56b6df53983a0b6af0cd07afa27fbe47210cb037ab6a85f3277c2b831"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_floor_tile_05_00.png",
+      "bytes": 132769,
+      "sha256": "f3dc1598e768c330a7a2d91770eff39d1eb18cbf515ce8087fdb22f6f0f20df2"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_floor_tile_05_01.png",
+      "bytes": 132366,
+      "sha256": "e4993b1f54230ddcc29506eb745881f0f96970ef57bc0fb2f64cd4450e5dce45"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_floor_tile_05_02.png",
+      "bytes": 132902,
+      "sha256": "7d181ce77eb9a8b40f11f2dd747de22d4b8ebdff7f0a09ee1d92de5bbe373aa2"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_floor_tile_05_03.png",
+      "bytes": 132432,
+      "sha256": "ac15add4565f73114677080577ed7ef7ea9fc43fede4d24f25f1caf46b012c7d"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_floor_tile_05_04.png",
+      "bytes": 132653,
+      "sha256": "4f0f780ec4c4774ba103d2d31a331057a50a4dc326badf988724944c3c9cabe9"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_floor_tile_05_05.png",
+      "bytes": 133182,
+      "sha256": "e099875b0ca4ac87e3b840e70bf58a835b18914cda4d395c23d7d87ff8943426"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_floor_tile_05_06.png",
+      "bytes": 132493,
+      "sha256": "af180d26f9dba18371f4cb167f67cdf6624735d0fe3e7e5c864f261ca3da9578"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_folding_table_thin_marble_top.png",
+      "bytes": 4018442,
+      "sha256": "5dc318d741141d74c8cae3e7855e6ade9e175120fc310c92da6fae613bdb5860"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_quartz_back.png",
+      "bytes": 238300,
+      "sha256": "aa03400118371362e5a9816bdb908b27e7fd1583bb9fe2ce1d8a5c175d3c0fba"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_quartz_front.png",
+      "bytes": 200493,
+      "sha256": "02664da359ccca6934a8023634bc4ba37ce5979ae212c8051c8d377a9b85f6e4"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_quartz_left.png",
+      "bytes": 253562,
+      "sha256": "cda506cc30c6828dd3e757931140fa0fcf520531d6a67193e645d2cca5970b50"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_quartz_right.png",
+      "bytes": 138272,
+      "sha256": "38048ad600e1722deff3a59ac79ab5a9e697006ec39479ed0ab8203a3cd12fe0"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_side_wood_wall.png",
+      "bytes": 768838,
+      "sha256": "a87535c309b9157674b0425e19db55f79d65a93f3d8af0ef380e720c15d640cf"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_toe_kick.png",
+      "bytes": 33406,
+      "sha256": "137e49ab04fe4a72a4b71b77172afd8ac698b35bc2e288dcbe302ab5a6fdb395"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_upper_divider.png",
+      "bytes": 52824,
+      "sha256": "858af0ae00608556b1b81700ecc4c211420bb38d0aa8122748929c3f795cf16e"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_upper_divider_001.png",
+      "bytes": 52824,
+      "sha256": "858af0ae00608556b1b81700ecc4c211420bb38d0aa8122748929c3f795cf16e"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_upper_divider_002.png",
+      "bytes": 52824,
+      "sha256": "858af0ae00608556b1b81700ecc4c211420bb38d0aa8122748929c3f795cf16e"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_upper_divider_003.png",
+      "bytes": 52824,
+      "sha256": "858af0ae00608556b1b81700ecc4c211420bb38d0aa8122748929c3f795cf16e"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_upper_divider_004.png",
+      "bytes": 52824,
+      "sha256": "858af0ae00608556b1b81700ecc4c211420bb38d0aa8122748929c3f795cf16e"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_upper_divider_005.png",
+      "bytes": 52824,
+      "sha256": "858af0ae00608556b1b81700ecc4c211420bb38d0aa8122748929c3f795cf16e"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_upper_divider_006.png",
+      "bytes": 52824,
+      "sha256": "858af0ae00608556b1b81700ecc4c211420bb38d0aa8122748929c3f795cf16e"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_upper_divider_007.png",
+      "bytes": 52824,
+      "sha256": "858af0ae00608556b1b81700ecc4c211420bb38d0aa8122748929c3f795cf16e"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_upper_door_0.png",
+      "bytes": 380375,
+      "sha256": "7d2530b371b498bce1ca39683c88ee41ff6dc4c20f63a32c78e29ea76843f572"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_upper_door_1.png",
+      "bytes": 380389,
+      "sha256": "fe332fa58c0060d0896f20943641d1fc2f9ee8a2fdf11a1b778e6207e194c784"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_upper_door_2.png",
+      "bytes": 380424,
+      "sha256": "fd6a817bf46b48eaaa607464a62141ecc6a8546509be251c70ab4d6c9e1ce871"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_upper_door_3.png",
+      "bytes": 380477,
+      "sha256": "b2ec77f72de1584cf1b26fe5072daf9b6008c5d4f6805922349bba74156aa1d3"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_upper_door_4.png",
+      "bytes": 380431,
+      "sha256": "f957103846539d6ae9e7d20228ab81185dd9c9b4101cca899bee4554ba2ac8c8"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_upper_door_5.png",
+      "bytes": 380395,
+      "sha256": "9f817d3af5975ebec4f200da5df1c8dbcef1eaeaf6a798d997912c6c255fbbae"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_upper_door_6.png",
+      "bytes": 380448,
+      "sha256": "af26ddf5e36f779470830568899ea43a347916e1472f489185b8b35b409548d7"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_upper_horizontal.png",
+      "bytes": 24435,
+      "sha256": "0cae99401f4f8a62472b3e681ce52a227fb1d3580d8fc4f8eae65d32bf8d23fb"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_upper_horizontal_001.png",
+      "bytes": 24435,
+      "sha256": "0cae99401f4f8a62472b3e681ce52a227fb1d3580d8fc4f8eae65d32bf8d23fb"
+    },
+    {
+      "path": "assets/shared/scenes/astra/textures/Albedo_veter_magazine_local_cropped_front_texture.png",
+      "bytes": 165833,
+      "sha256": "fb3a7cf4b918782ed09ad8bdde2fc67f4e0c2e7ff895f4d6f1ff44d88eb7d674"
+    },
+    {
+      "path": "assets/shared/scenes/task12.usdc",
+      "bytes": 93594,
+      "sha256": "c187acf14502fa4368fc478ef3212399e7d50fe104103de1a72be68885ed3317"
+    },
+    {
+      "path": "assets/task3/scene.usdc",
+      "bytes": 5132504,
+      "sha256": "69ae51140c65b61ff72259694bbce7e7221242bad19c5be31f64f4e4b4a9d65b"
+    }
+  ]
+}

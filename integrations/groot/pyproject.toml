@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "zerohlm-groot-inference"
+version = "0.1.0"
+description = "GR00T N1.7 inference runtime for the Unitree G1 SONIC interface"
+requires-python = ">=3.10,<3.11"
+license = {file = "LICENSE"}
+dependencies = []
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["gr00t*"]
+namespaces = true
