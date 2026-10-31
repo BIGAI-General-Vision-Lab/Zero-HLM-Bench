@@ -893,9 +893,9 @@ def camera_pose_for_2dgs(
 ) -> tuple[np.ndarray, list[float]]:
     """Convert Isaac camera pose into the 2DGS adapter convention.
 
-    ``legacy`` preserves the historic adapter behavior.  The other modes are
-    probe-only compatibility diagnostics selected through an environment
-    variable; production must use the mode validated against a known frame.
+    The default ``legacy`` mode delegates to the bundled adapter. ``raw``
+    passes through the pose, and ``corrected`` applies an explicit basis
+    conversion. Keep the default for the released evaluation profiles.
     """
 
     mode = os.environ.get("HUMANOIDVLA_GS_POSE_MODE", "legacy").strip().lower()

@@ -8,7 +8,7 @@ Each task is evaluated on **100 fixed configurations** from the checked-in [mani
 
 *Tasks 1–3 (A–C), with 100 configurations each. Crosses mark sampled XY asset-root positions; dashed outlines show their convex hulls. Task 3 positions use the nominal scene frame.*
 
-The three tasks share a complete textured Astra visual scene and use Astra static collision geometry, with a separate ground plane. Task-specific movable objects and the articulated cabinet door retain their own assets. Scene and texture checksums are verified before launch.
+All three tasks use textured Astra visual scenes and Astra static collision geometry, with a separate ground plane. Tasks 1 and 2 share a scene asset; Task 3 uses its own scene. Task-specific movable objects and the articulated cabinet door retain their own assets. Scene and texture checksums are verified before launch.
 
 ## Observations and Control
 
@@ -16,7 +16,7 @@ The three tasks share a complete textured Astra visual scene and use Astra stati
 | --- | --- |
 | Observations | Egocentric RGB, 34-dimensional robot state, and task instruction |
 | Actions | 64-dimensional SONIC latent commands and two hand commands |
-| Action chunk | 16 steps for Task 1; 40 for Tasks 2 and 3 |
+| Executed steps per inference | 16 for Task 1; 40 for Tasks 2 and 3 |
 | Maximum horizon | 2,000 policy-control steps |
 | Environments per client | 1 |
 

@@ -36,13 +36,13 @@
 
 The benchmark accompanies [Zero-HLM: Generalizable Humanoid Loco-Manipulation without Real Robot Data](https://arxiv.org/abs/2610.35075).
 
-**📦 Current release:** **three tasks**, **100 evaluation configurations per task**, and **800 simulation training demonstrations per task**, and **GR00T N1.7 checkpoints**, with a separate policy server and simulation client.
+**📦 Current release:** **three tasks**, **100 evaluation configurations per task**, **800 simulation training demonstrations per task**, and **GR00T N1.7 checkpoints**. Evaluation uses a separate policy server and simulation client.
 
 <a id="tasks"></a>
 
 ## 🎯 Tasks
 
-| Task | Instruction | Whole-Body Skills |
+| Task | Task Summary | Whole-Body Skills |
 | --- | --- | --- |
 | **1 · Mobile Pick-and-Place** | Walk to the table, pick up the banana, and place it in the basket. | Locomotion, grasping, and placement |
 | **2 · Low-Reach Hat Placement** | Pick up the hat, carry it to the cabinet, and place it on top. | Low reaching, transport, and elevated placement |
@@ -99,7 +99,7 @@ python scripts/download_data.py --task all --destination data
 
 Datasets use **LeRobot v2.1** with 640 × 480 RGB observations, 34-dimensional robot states, and 66-dimensional actions at 50 Hz. Actions comprise a 64-dimensional SONIC latent command and two hand commands.
 
-Use `--task task1`, `task2`, or `task3` to download a single task. Downloads are pinned to an immutable dataset revision and verified with SHA-256 before extraction. Allow approximately **18 GB** for all archives and extracted data. The released 800-episode training subsets are identified separately from the training selections used by existing checkpoints.
+Use `--task task1`, `task2`, or `task3` to download a single task. Downloads are pinned to an immutable dataset revision and verified with SHA-256 before extraction. Allow approximately **18 GB** for all archives and extracted data. The released checkpoints use different training selections from these 800-episode subsets.
 
 <a id="evaluation"></a>
 
@@ -111,7 +111,7 @@ The **server runs policy inference**; the **client handles simulation, rendering
 python scripts/download_models.py --task all
 ```
 
-Each checkpoint is approximately **6.9 GB** (**20.7 GB** for all three). Use `--task task2` to download only the example below. Downloads use a pinned revision and verify every file with SHA-256. The checkpoints retain their original training selections, which differ from the released 800-demonstration subsets.
+Each checkpoint is approximately **6.9 GB** (**20.7 GB** for all three). Use `--task task2` to download only the example below. Downloads use a pinned revision and verify every file with SHA-256. The checkpoint training selections differ from the released 800-demonstration subsets.
 
 From the repository root, evaluate Task 2:
 

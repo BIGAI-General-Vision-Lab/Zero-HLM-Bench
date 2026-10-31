@@ -12,7 +12,7 @@ Download the released Task 2 checkpoint:
 python scripts/download_models.py --task task2
 ```
 
-Use `--task all` for all three tasks. Each checkpoint includes weights, the shard index, model configuration, and processor configuration, normalization statistics, and embodiment mapping. Task 3 retains these processor files in `processor/`; the launcher supports both layouts.
+Use `--task all` for all three tasks. Each checkpoint includes model weights and configuration, a shard index, processor settings, normalization statistics, and an embodiment mapping. Task 3 retains these processor files in `processor/`; the launcher supports both layouts.
 
 **Terminal 1 · Policy environment**
 
@@ -70,17 +70,19 @@ The interface uses **ZeroMQ REQ/REP** with **MessagePack** and **MessagePack-Num
 | --- | --- | --- |
 | `ping` | absent | Status mapping |
 | `reset` | `{"options": null}` | Status mapping; clear temporal state |
-| `get_modality_config` | absent | `unitree_g1_sonic` modality mapping |
+| `get_modality_config` | absent | Mapping with `video`, `state`, `action`, and `language` entries |
 | `get_action` | `{"observation": observation, "options": null}` | `[action, info]` |
 
 | Input / Output | Format |
 | --- | --- |
-| `video.ego_view` | RGB uint8, shape `[1, T, H, W, 3]` |
+| `observation["video"]["ego_view"]` | RGB uint8, shape `[1, T, H, W, 3]` |
 | `state` | 34-dimensional float32 state, split into modality fields of shape `[1, T, D]` |
-| `language` | Task instruction in the task's language modality field |
+| `observation["language"][task_key]` | `[[instruction]]` for the released one-step language input |
 | `sonic_token` | 64-dimensional action, shape `[1, T, 64]` |
 | `left_hand_gripper`, `right_hand_gripper` | One command per hand, each shape `[1, T, 1]` |
 
-Match the modality keys, order, and history indices in the [shared protocol](../configs/protocol/shared/processor_config.json). Return at least **16 action steps for Task 1** and **40 for Tasks 2 and 3**. Return an `error` mapping when inference fails.
+Match the modality keys, order, and history indices in the [shared protocol](../configs/protocol/shared/processor_config.json). The released protocol declares **40 action steps**. The client executes the first **16 steps for Task 1** or **40 for Tasks 2 and 3** before requesting another chunk. Return an `error` mapping when inference fails.
+
+The modality response is the `processor_kwargs.modality_configs.unitree_g1_sonic` mapping from the shared protocol, without an outer embodiment key. Observations use nested `video`, `state`, and `language` dictionaries; `task_key` is `annotation.human.action.task_description`. The action mapping returned in `[action, info]` has `sonic_token`, `left_hand_gripper`, and `right_hand_gripper` as direct keys.
 
 The [GR00T integration](../integrations/groot) provides a working server implementation.
