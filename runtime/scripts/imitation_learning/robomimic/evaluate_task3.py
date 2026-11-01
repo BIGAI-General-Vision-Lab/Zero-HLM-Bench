@@ -530,11 +530,6 @@ class Task3DynamicDoorRenderer:
             real2sim_root=args.two_d_gs_real2sim_root,
             semantic_tolerance=args.gs_semantic_tolerance,
             foreground_mode="isaac_mesh",
-            robot_parts_dir=args.robot_gs_parts_dir,
-            robot_reference_ply=args.robot_gs_reference_ply,
-            robot_link_json=args.robot_link_json,
-            robot_urdf=args.robot_urdf,
-            robot_gs_root=args.gs_root,
             apply_training_color_match=False,
         )
         self.base = Online2DGSRenderer(args.gs_scene_path, **common)
@@ -644,7 +639,7 @@ def validate_required_assets(args) -> None:
         raise FileNotFoundError("Mandatory Task3 evaluation assets are missing: " + ", ".join(missing))
     print(
         f"[GS] Task3 dynamic scene={args.gs_scene_path} door={TASK3_DOOR_PLY} "
-        "foreground=isaac_mesh robot_gs=False",
+        "foreground=isaac_mesh",
         flush=True,
     )
 
@@ -674,7 +669,6 @@ def write_metadata(args, run_dir, manifest_digest, chosen_envs, fallback_reason,
     payload["task3_render_contract"] = {
         "foreground": ["isaac_mesh_robot", "isaac_mesh_basket", "isaac_mesh_stool"],
         "background": "dynamic_B1_art_scene_and_hinged_door_2dgs",
-        "robot_gs": False,
         "depth_or_zbuffer_foreground_test": False,
         "training_color_match": os.environ.get("TASK3_APPLY_CARRYBOX_COLOR_MATCH", "1") != "0",
         "training_color_profile": "carrybox-real-v1",

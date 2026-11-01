@@ -41,10 +41,6 @@ from wbc_play_groot_sonic import (  # noqa: E402
     DEFAULT_GS_ROOT,
     DEFAULT_HEADCAM_CALIB,
     DEFAULT_MODELS_DIR,
-    DEFAULT_ROBOT_GS_PARTS_DIR,
-    DEFAULT_ROBOT_GS_REFERENCE_PLY,
-    DEFAULT_ROBOT_LINK_JSON,
-    DEFAULT_ROBOT_URDF,
     DEFAULT_TASK,
     DEFAULT_TWO_D_GS_REAL2SIM_ROOT,
     HEAD_JOINT_NAMES,
@@ -589,7 +585,7 @@ def parse_args(adapter: EvaluationTaskAdapter | None = None) -> argparse.Namespa
     parser.add_argument("--gs_backend", choices=("auto", "2dgs", "3dgs"), default="auto")
     parser.add_argument(
         "--gs_foreground_mode",
-        choices=("isaac_mesh", "robot_gs"),
+        choices=("isaac_mesh",),
         default="isaac_mesh",
         help="Render the robot and task objects as meshes over the Gaussian scene.",
     )
@@ -601,10 +597,6 @@ def parse_args(adapter: EvaluationTaskAdapter | None = None) -> argparse.Namespa
     )
     parser.add_argument("--gs_root", type=Path, default=DEFAULT_GS_ROOT)
     parser.add_argument("--two_d_gs_real2sim_root", type=Path, default=DEFAULT_TWO_D_GS_REAL2SIM_ROOT)
-    parser.add_argument("--robot_gs_parts_dir", type=Path, default=DEFAULT_ROBOT_GS_PARTS_DIR)
-    parser.add_argument("--robot_gs_reference_ply", type=Path, default=DEFAULT_ROBOT_GS_REFERENCE_PLY)
-    parser.add_argument("--robot_link_json", type=Path, default=DEFAULT_ROBOT_LINK_JSON)
-    parser.add_argument("--robot_urdf", type=Path, default=DEFAULT_ROBOT_URDF)
     parser.add_argument("--gs_semantic_tolerance", type=int, default=12)
     parser.add_argument(
         "--camera_warmup_renders",
@@ -1402,15 +1394,6 @@ def write_metadata(args: argparse.Namespace, run_dir: Path, manifest_digest: str
         "headcam_calib": str(args.headcam_calib),
         "sonic_models_dir": str(args.models_dir),
     }
-    if args.gs_foreground_mode == "robot_gs":
-        assets.update(
-            {
-                "robot_gs_parts_dir": str(args.robot_gs_parts_dir),
-                "robot_gs_reference_ply": str(args.robot_gs_reference_ply),
-                "robot_link_json": str(args.robot_link_json),
-                "robot_urdf": str(args.robot_urdf),
-            }
-        )
     asset_hashes = {
         key: sha256_file(Path(value).expanduser().resolve())
         for key, value in assets.items()
@@ -1463,15 +1446,6 @@ def validate_required_assets(args: argparse.Namespace) -> None:
     paths = [args.checkpoint_dir, args.gs_scene_path, args.headcam_calib, args.models_dir]
     if args.init_joint_state_from_indis and args.init_joint_state_dataset is None:
         paths.append(args.init_joint_state_json)
-    if args.gs_foreground_mode == "robot_gs":
-        paths.extend(
-            [
-                args.robot_gs_parts_dir,
-                args.robot_gs_reference_ply,
-                args.robot_link_json,
-                args.robot_urdf,
-            ]
-        )
     missing = [str(Path(p).expanduser()) for p in paths if not Path(p).expanduser().exists()]
     if missing:
         raise FileNotFoundError("Mandatory evaluation assets are missing: " + ", ".join(missing))

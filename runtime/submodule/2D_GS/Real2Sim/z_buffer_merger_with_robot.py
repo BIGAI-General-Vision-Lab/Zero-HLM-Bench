@@ -13,14 +13,11 @@ import torch.nn.functional as F
 
 PROJECT_ROOT = Path(__file__).resolve().parents[3]
 BUNDLED_REAL2SIM = PROJECT_ROOT / "utils" / "real2sim"
-ROBOMIMIC_TOOLS = PROJECT_ROOT / "scripts" / "imitation_learning" / "robomimic"
-for module_root in (ROBOMIMIC_TOOLS, BUNDLED_REAL2SIM):
-    if str(module_root) not in sys.path:
-        sys.path.insert(0, str(module_root))
+if str(BUNDLED_REAL2SIM) not in sys.path:
+    sys.path.insert(0, str(BUNDLED_REAL2SIM))
 
 import z_buffer_merger as _base
 from z_buffer_merger import *  # noqa: F401,F403
-from gs_3d_adapter import RobotArmGSAssembler
 
 
 def camera_intrinsics_from_matrix(matrix, width: int, height: int) -> dict:
@@ -42,11 +39,8 @@ def z_buffer_merge_force_foreground_over_bg(
     bg_rgb,
     bg_depth,
     force_mask,
-    robot_rgb=None,
-    robot_depth=None,
-    robot_valid_mask=None,
 ):
-    """Force Isaac objects over scene GS, then optionally depth-test robot GS."""
+    """Force Isaac mesh foreground over the Gaussian scene."""
     qian_depth = qian_depth.squeeze()
     qian_rgb_bgra = _base.cv2.cvtColor(qian_rgb, _base.cv2.COLOR_RGBA2BGRA)
     final_rgb = bg_rgb.copy()
@@ -56,12 +50,6 @@ def z_buffer_merge_force_foreground_over_bg(
     final_rgb[force_mask] = qian_rgb_bgra[force_mask, :3]
     final_depth[force_mask] = qian_depth[force_mask]
 
-    if robot_rgb is not None and robot_depth is not None:
-        if robot_valid_mask is None:
-            robot_valid_mask = robot_depth < np.iinfo(np.uint16).max
-        robot_front = robot_valid_mask & (robot_depth < final_depth)
-        final_rgb[robot_front] = robot_rgb[robot_front]
-        final_depth[robot_front] = robot_depth[robot_front]
     return final_rgb, final_depth
 
 
@@ -153,47 +141,23 @@ class GSBackgroundRenderer(_base.GSBackgroundRenderer):
         if sh_params:
             self.adjust_sh_parameters(**sh_params)
 
-    def build_robot_model(self, attrs):
-        """Build a render-only Gaussian model from FK-transformed robot parts."""
-        model = self.backend["GaussianModel"](3)
-        model._xyz = attrs["xyz"]
-        model._features_dc = attrs["features_dc"]
-        model._features_rest = attrs["features_rest"]
-        model._scaling = attrs["scaling"]
-        model._rotation = attrs["rotation"]
-        model._opacity = attrs["opacity"]
-        model.active_sh_degree = min(3, model.max_sh_degree)
-        return model
-
     @torch.no_grad()
-    def render(self, viewpoint_camera, gs_model=None, depth_threshold=0.1):
-        model = self.gs if gs_model is None else gs_model
+    def render(self, viewpoint_camera, depth_threshold=0.1):
         background = torch.zeros(3, dtype=torch.float32, device="cuda")
         if self.backend_name == "2dgs" and not hasattr(self.pipe, "depth_ratio"):
             self.pipe.depth_ratio = 0.0
         if self.backend_name == "2dgs" and self.inference_only and self._supports_inference_only:
             package = self.render_fn(
                 viewpoint_camera,
-                model,
+                self.gs,
                 self.pipe,
                 background,
                 inference_only=True,
             )
         else:
-            package = self.render_fn(viewpoint_camera, model, self.pipe, background)
+            package = self.render_fn(viewpoint_camera, self.gs, self.pipe, background)
         if self.backend_name == "2dgs":
-            surface_depth = package["surf_depth"]
-            # The repository helper recovers standalone robot depth by
-            # inverting this field, while background callers consume metric
-
-            if gs_model is None:
-                depth_m = surface_depth
-            else:
-                depth_m = torch.where(
-                    surface_depth > 1.0e-6,
-                    surface_depth.reciprocal(),
-                    torch.full_like(surface_depth, viewpoint_camera.zfar),
-                )
+            depth_m = package["surf_depth"]
             valid_mask = package["rend_alpha"] > depth_threshold
         else:
             depth_m = package["depth"]

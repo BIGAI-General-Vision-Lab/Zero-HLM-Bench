@@ -259,7 +259,6 @@ def write_metadata(args, run_dir, manifest_digest, chosen_envs, fallback_reason,
         "foreground": "isaac_mesh_robot_and_rigid_assets",
         "background": "B1_0711_2dgs",
         "background_color_profile": "task2_training",
-        "robot_gs": False,
         "depth_or_zbuffer_foreground_test": False,
     }
     shared.write_json(metadata_path, payload)

@@ -71,11 +71,6 @@ DEFAULT_TWO_D_GS_REAL2SIM_ROOT = Path(
 )
 DEFAULT_GS_ROOT = Path(os.environ.get("THREE_D_GS_ROOT", REPO_ROOT / "submodule" / "3DGS"))
 DEFAULT_OUTPUT_DIR = REPO_ROOT / "outputs" / "wbc_play_groot_sonic"
-DEFAULT_ROBOT_GS_ROOT = REPO_ROOT / "assets" / "robot_gs"
-DEFAULT_ROBOT_GS_PARTS_DIR = DEFAULT_ROBOT_GS_ROOT / "part_ply_joints"
-DEFAULT_ROBOT_GS_REFERENCE_PLY = DEFAULT_ROBOT_GS_ROOT / "full_body_recon.ply"
-DEFAULT_ROBOT_LINK_JSON = DEFAULT_ROBOT_GS_ROOT / "urdf_pcd" / "g1_arm_link_T_base.json"
-DEFAULT_ROBOT_URDF = REPO_ROOT / "submodule" / "GMR" / "assets" / "unitree_g1" / "g1_29dof_inspire.urdf"
 
 FOREGROUND_SEMANTIC_RGB = np.array(
     [
@@ -85,7 +80,6 @@ FOREGROUND_SEMANTIC_RGB = np.array(
     ],
     dtype=np.int16,
 )
-OBJECT_PLACEMENT_SEMANTIC_RGB = FOREGROUND_SEMANTIC_RGB[1:].copy()
 TRAINING_RGB_SCALE = np.array([0.902, 0.824, 0.831], dtype=np.float32)
 TRAINING_RGB_OFFSET = np.array([11.6, 15.9, 9.0], dtype=np.float32)
 
@@ -387,10 +381,6 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--gs_backend", choices=("auto", "2dgs", "3dgs"), default="auto")
     parser.add_argument("--gs_root", type=Path, default=DEFAULT_GS_ROOT)
     parser.add_argument("--two_d_gs_real2sim_root", type=Path, default=DEFAULT_TWO_D_GS_REAL2SIM_ROOT)
-    parser.add_argument("--robot_gs_parts_dir", type=Path, default=DEFAULT_ROBOT_GS_PARTS_DIR)
-    parser.add_argument("--robot_gs_reference_ply", type=Path, default=DEFAULT_ROBOT_GS_REFERENCE_PLY)
-    parser.add_argument("--robot_link_json", type=Path, default=DEFAULT_ROBOT_LINK_JSON)
-    parser.add_argument("--robot_urdf", type=Path, default=DEFAULT_ROBOT_URDF)
     parser.add_argument("--gs_semantic_tolerance", type=int, default=12)
     parser.add_argument(
         "--gs_apply_training_color_match",
@@ -942,13 +932,10 @@ class Online2DGSRenderer:
         semantic_tolerance: int,
         *,
         foreground_mode: str = "isaac_mesh",
-        robot_parts_dir: Path,
-        robot_reference_ply: Path,
-        robot_link_json: Path,
-        robot_urdf: Path,
-        robot_gs_root: Path,
         apply_training_color_match: bool = False,
     ):
+        if foreground_mode != "isaac_mesh":
+            raise ValueError(f"Unsupported GS foreground mode: {foreground_mode}")
         real2sim_root = real2sim_root.expanduser().resolve()
         module_path = real2sim_root / "z_buffer_merger_with_robot.py"
         if not module_path.is_file():
@@ -1005,42 +992,14 @@ class Online2DGSRenderer:
         self._scene_base_rotation = self.renderer.gs._rotation.detach().clone()
         self._scene_transform = np.eye(4, dtype=np.float32)
         self.set_scene_transform(gs_scene_transform_from_env())
-        if foreground_mode not in {"robot_gs", "isaac_mesh"}:
-            raise ValueError(f"Unsupported GS foreground mode: {foreground_mode}")
         self.foreground_mode = foreground_mode
         self.apply_training_color_match = bool(apply_training_color_match)
-        self.robot_renderer = None
-        self.robot_assembler = None
-        if self.foreground_mode == "robot_gs":
-            required_robot_assets = (robot_parts_dir, robot_reference_ply, robot_link_json, robot_urdf)
-            missing = [str(path) for path in required_robot_assets if not path.expanduser().resolve().exists()]
-            if missing:
-                raise FileNotFoundError(f"Robot/hand GS assets are missing: {missing}")
-            robot_gs_root = robot_gs_root.expanduser().resolve()
-            if not robot_gs_root.is_dir():
-                raise FileNotFoundError(f"3DGS backend root not found: {robot_gs_root}")
-            # The scene PLY is 2DGS while the articulated robot parts are
-            # standard 3DGS. Keep their import/runtime backends independent;
-            # sharing the scene backend interprets the robot's third scale
-            # component with the wrong rasterizer.
-            module._base.THREE_D_GS_ROOT = str(robot_gs_root)
-            module._base._BACKEND_CACHE.pop("3dgs", None)
-            self.robot_renderer = module.GSBackgroundRenderer(
-                model_path=str(robot_reference_ply.expanduser().resolve()),
-                intrinsics=intrinsics,
-            )
-            self.robot_assembler = module.RobotArmGSAssembler(
-                gaussian_model_cls=self.robot_renderer.backend["GaussianModel"],
-                parts_dir=robot_parts_dir.expanduser().resolve(),
-                link_json=robot_link_json.expanduser().resolve(),
-                urdf=robot_urdf.expanduser().resolve(),
-            )
         self.semantic_tolerance = int(semantic_tolerance)
         self._debug_dumped = False
         print(
             "[INFO] GS layer backends: "
             f"scene={self.renderer.backend_name} "
-            f"robot={None if self.robot_renderer is None else self.robot_renderer.backend_name} "
+            "foreground=isaac_mesh "
             f"training_color_match={self.apply_training_color_match}",
             flush=True,
         )
@@ -1100,46 +1059,11 @@ class Online2DGSRenderer:
         frame, _ = gs_render_from_env(
             self,
             get_head_camera(env),
-            robot=robot,
-            sim_joint_names=sim_joint_names,
             env_id=env_id,
             env_origin_w=env.scene.env_origins[int(env_id)].detach().cpu().numpy(),
             camera_pose_override=camera_pose_override,
         )
         return frame
-
-    def robot_attrs(self, *, root_state_w: np.ndarray, joint_names: list[str], joint_pos: np.ndarray):
-        if self.robot_assembler is None:
-            return None
-        return self.robot_assembler.frame_attrs(
-            np.asarray(root_state_w, dtype=np.float32)[:7],
-            list(joint_names),
-            np.asarray(joint_pos, dtype=np.float32),
-        )
-
-    def _render_robot_layer(self, camera, robot_attrs):
-        robot_model = self.robot_renderer.build_robot_model(robot_attrs)
-        black_pkg = self.robot_renderer.render(camera, gs_model=robot_model)
-        black_rgb = black_pkg["render"].detach().clamp(0, 1).permute(1, 2, 0).cpu().numpy()
-        inverse_depth = black_pkg["depth_m"].detach().squeeze().cpu().numpy()
-        black_valid = black_pkg["valid_mask"].detach().squeeze().cpu().numpy().astype(bool)
-        del black_pkg
-        white_bg = self.zbuf.torch.ones(3, dtype=self.zbuf.torch.float32, device="cuda")
-        if self.robot_renderer.backend_name == "2dgs" and not hasattr(self.robot_renderer.pipe, "depth_ratio"):
-            self.robot_renderer.pipe.depth_ratio = 0.0
-        white_pkg = self.robot_renderer.render_fn(
-            camera,
-            robot_model,
-            self.robot_renderer.pipe,
-            white_bg,
-        )
-        white_rgb = white_pkg["render"].detach().clamp(0, 1).permute(1, 2, 0).cpu().numpy()
-        del white_pkg, robot_model
-        alpha = np.clip(1.0 - np.mean(white_rgb - black_rgb, axis=-1), 0.0, 1.0)
-        depth_m = np.full_like(inverse_depth, camera.zfar, dtype=np.float32)
-        np.divide(1.0, inverse_depth, out=depth_m, where=inverse_depth > 1.0e-6)
-        valid = black_valid & (alpha > 0.02)
-        return black_rgb, alpha, depth_m, valid
 
     def render_with_gs_bg(
         self,
@@ -1149,21 +1073,14 @@ class Online2DGSRenderer:
         isaac_render_rgb: np.ndarray,
         isaac_render_depth: np.ndarray,
         isaac_render_semantic_images: np.ndarray,
-        robot_attrs: Any | None = None,
     ) -> tuple[np.ndarray, np.ndarray]:
-        if self.foreground_mode == "robot_gs" and robot_attrs is None:
-            raise RuntimeError("Online 2DGS observation requires robot/hand GS attributes")
         rgb = np.asarray(isaac_render_rgb, dtype=np.uint8)[..., :3]
         semantic = np.asarray(isaac_render_semantic_images)[..., :3]
         height, width = rgb.shape[:2]
         fg_mask = semantic_foreground_mask(
             semantic,
             self.semantic_tolerance,
-            colors=(
-                FOREGROUND_SEMANTIC_RGB
-                if self.foreground_mode == "isaac_mesh"
-                else OBJECT_PLACEMENT_SEMANTIC_RGB
-            ),
+            colors=FOREGROUND_SEMANTIC_RGB,
         )
         debug_dir = os.environ.get("HUMANOIDVLA_GS_DEBUG_DIR")
         if debug_dir and not self._debug_dumped:
@@ -1206,26 +1123,6 @@ class Online2DGSRenderer:
         merged_depth_mm = bg_depth_mm.copy()
         if np.any(fg_mask):
             merged_bgr[fg_mask] = rgb[..., ::-1][fg_mask]
-        if self.foreground_mode == "isaac_mesh":
-            return self._finalize_rgb(merged_bgr), merged_depth_mm
-
-
-        robot_rgb, robot_alpha, robot_depth_m, robot_valid = self._render_robot_layer(cam, robot_attrs)
-        robot_bgr = np.clip(robot_rgb * 255.0, 0, 255).astype(np.uint8)[..., ::-1]
-        robot_depth_mm = np.clip(robot_depth_m * 1000.0, 0, np.iinfo(np.uint16).max).astype(np.uint16)
-        # Do not depth-test robot GS against the Isaac foreground.  The two
-        # renderers use different depth conventions; the layer order above is
-        # the authoritative visibility contract for online policy observations.
-        robot_front = robot_valid & (robot_alpha > 0.02)
-        if np.any(robot_front):
-            alpha = robot_alpha[robot_front, None].astype(np.float32)
-            merged_bgr[robot_front] = np.clip(
-                robot_bgr[robot_front].astype(np.float32)
-                + (1.0 - alpha) * merged_bgr[robot_front].astype(np.float32),
-                0,
-                255,
-            ).astype(np.uint8)
-            merged_depth_mm[robot_front] = robot_depth_mm[robot_front]
         return self._finalize_rgb(merged_bgr), merged_depth_mm
 
 
@@ -1248,12 +1145,7 @@ def init_gs_renderer(args: argparse.Namespace, env) -> Any | None:
                 camera,
                 args.two_d_gs_real2sim_root,
                 args.gs_semantic_tolerance,
-                foreground_mode=getattr(args, "gs_foreground_mode", "robot_gs"),
-                robot_parts_dir=args.robot_gs_parts_dir,
-                robot_reference_ply=args.robot_gs_reference_ply,
-                robot_link_json=args.robot_link_json,
-                robot_urdf=args.robot_urdf,
-                robot_gs_root=args.gs_root,
+                foreground_mode=getattr(args, "gs_foreground_mode", "isaac_mesh"),
                 apply_training_color_match=bool(getattr(args, "gs_apply_training_color_match", False)),
             )
         from gs_3d_adapter import ThreeDGSRenderer
@@ -1277,7 +1169,6 @@ def init_gs_renderer(args: argparse.Namespace, env) -> Any | None:
             foreground_depth_scale_semantic_rgba=foreground_rgba[1:],
             foreground_depth_scale=1.0,
             intrinsics_matrix=intrinsic,
-            texture_robot=False,
             use_fake_plane_depth=False,
         )
     except Exception as exc:
@@ -1291,8 +1182,6 @@ def init_gs_renderer(args: argparse.Namespace, env) -> Any | None:
 def gs_render_from_env(
     gs_render,
     camera,
-    robot=None,
-    sim_joint_names: list[str] | None = None,
     *,
     env_id: int = 0,
     env_origin_w: np.ndarray | None = None,
@@ -1326,25 +1215,12 @@ def gs_render_from_env(
             camera_2dgs_quat_wxyz=np.asarray(camera_quat_w, dtype=np.float64),
             env_origin_w=np.asarray(origin, dtype=np.float64),
         )
-    robot_attrs = None
-    if (
-        robot is not None
-        and sim_joint_names is not None
-        and getattr(gs_render, "foreground_mode", "robot_gs") == "robot_gs"
-        and hasattr(gs_render, "robot_attrs")
-    ):
-        root_state_w = robot.data.root_state_w[int(env_id)].detach().cpu().numpy()
-        root_state_w = root_state_w.copy()
-        root_state_w[:3] -= origin
-        joint_pos = robot.data.joint_pos[int(env_id)].detach().cpu().numpy()
-        robot_attrs = gs_render.robot_attrs(root_state_w=root_state_w, joint_names=sim_joint_names, joint_pos=joint_pos)
     return gs_render.render_with_gs_bg(
         pos_=camera_pos_w,
         quat_w_world=camera_quat_w,
         isaac_render_rgb=rgb,
         isaac_render_depth=depth,
         isaac_render_semantic_images=semantic,
-        robot_attrs=robot_attrs,
     )
 
 
@@ -1362,8 +1238,6 @@ def capture_head_camera_rgb(
         frame, _ = gs_render_from_env(
             gs_render,
             camera,
-            robot=robot,
-            sim_joint_names=sim_joint_names,
             env_id=env_id,
         )
         source = "gs_zbuffer"

@@ -1,11 +1,7 @@
 from __future__ import annotations
 
 import importlib
-import json
-import math
-import os
 import sys
-import types
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -25,30 +21,6 @@ _GS_IMPORT_PREFIXES = (
 )
 
 PROJECT_ROOT = Path(__file__).resolve().parents[3]
-_ROBOT_RECON_DIR = Path(os.environ.get("ROBOT_RECON_DIR", PROJECT_ROOT / "submodule" / "robot_arm_recon"))
-DEFAULT_ROBOT_PARTS_DIR = _ROBOT_RECON_DIR / "part_ply_joints"
-DEFAULT_ROBOT_LINK_JSON = _ROBOT_RECON_DIR / "urdf_pcd" / "g1_arm_link_T_base.json"
-_ROBOT_CAM_CALIB_DIR = Path(os.environ.get("ROBOT_CAM_CALIB_DIR", PROJECT_ROOT / "utils" / "robot_calib"))
-
-if str(_ROBOT_CAM_CALIB_DIR) not in sys.path:
-    sys.path.insert(0, str(_ROBOT_CAM_CALIB_DIR))
-
-if "open3d" not in sys.modules:
-    open3d_stub = types.ModuleType("open3d")
-    visualization_stub = types.ModuleType("open3d.visualization")
-    visualization_stub.gui = types.SimpleNamespace()
-    visualization_stub.rendering = types.SimpleNamespace()
-    open3d_stub.visualization = visualization_stub
-    sys.modules["open3d"] = open3d_stub
-    sys.modules["open3d.visualization"] = visualization_stub
-
-try:
-    from select_robot_points_open3d import DEFAULT_URDF, _compute_link_transforms, _parse_robot_model
-except Exception:
-    DEFAULT_URDF = PROJECT_ROOT / "submodule" / "GMR" / "assets" / "unitree_g1" / "g1_29dof_inspire.urdf"
-    _compute_link_transforms = None
-    _parse_robot_model = None
-
 
 def _clear_gs_modules() -> None:
     for module_name in list(sys.modules.keys()):
@@ -150,179 +122,6 @@ def _pose_to_matrix(translation: np.ndarray, rotation_xyzw: np.ndarray) -> torch
         dtype=np.float32,
     )
     return torch.from_numpy(pose).float()
-
-
-def _quat_wxyz_to_matrix(quat_wxyz: np.ndarray) -> np.ndarray:
-    quat_wxyz = np.asarray(quat_wxyz, dtype=np.float64).reshape(4)
-    norm = float(np.linalg.norm(quat_wxyz))
-    if norm < 1e-12:
-        return np.eye(3, dtype=np.float64)
-    quat_wxyz = quat_wxyz / norm
-    return R.from_quat([quat_wxyz[1], quat_wxyz[2], quat_wxyz[3], quat_wxyz[0]]).as_matrix()
-
-
-def _pose_wxyz_to_matrix(position: np.ndarray, quat_wxyz: np.ndarray) -> np.ndarray:
-    out = np.eye(4, dtype=np.float64)
-    out[:3, :3] = _quat_wxyz_to_matrix(quat_wxyz)
-    out[:3, 3] = np.asarray(position, dtype=np.float64).reshape(3)
-    return out
-
-
-def _matrix_to_quat_wxyz(rot: np.ndarray) -> np.ndarray:
-    quat_xyzw = R.from_matrix(np.asarray(rot, dtype=np.float64).reshape(3, 3)).as_quat()
-    quat_wxyz = np.array([quat_xyzw[3], quat_xyzw[0], quat_xyzw[1], quat_xyzw[2]], dtype=np.float32)
-    norm = float(np.linalg.norm(quat_wxyz))
-    if norm < 1e-12:
-        return np.array([1.0, 0.0, 0.0, 0.0], dtype=np.float32)
-    if quat_wxyz[0] < 0.0:
-        quat_wxyz = -quat_wxyz
-    return quat_wxyz / norm
-
-
-def _torch_quat_mul_wxyz(q1: torch.Tensor, q2: torch.Tensor) -> torch.Tensor:
-    w1, x1, y1, z1 = q1.unbind(dim=-1)
-    w2, x2, y2, z2 = q2.unbind(dim=-1)
-    return torch.stack(
-        [
-            w1 * w2 - x1 * x2 - y1 * y2 - z1 * z2,
-            w1 * x2 + x1 * w2 + y1 * z2 - z1 * y2,
-            w1 * y2 - x1 * z2 + y1 * w2 + z1 * x2,
-            w1 * z2 + x1 * y2 - y1 * x2 + z1 * w2,
-        ],
-        dim=-1,
-    )
-
-
-class RobotArmGSAssembler:
-    _FTP_LINK_PREFIX = "g1_43dof_comp_inspire_hand_FTP_"
-
-    def __init__(self, gaussian_model_cls, parts_dir: str | Path, link_json: str | Path, urdf: str | Path):
-        if _parse_robot_model is None or _compute_link_transforms is None:
-            raise RuntimeError("Robot texture requires select_robot_points_open3d FK helpers.")
-        self.gaussian_model_cls = gaussian_model_cls
-        self.parts_dir = Path(parts_dir).expanduser().resolve()
-        self.link_json = Path(link_json).expanduser().resolve()
-        self.urdf = Path(urdf).expanduser().resolve()
-        if not self.parts_dir.is_dir():
-            raise FileNotFoundError(f"Robot GS parts dir not found: {self.parts_dir}")
-        if not self.link_json.is_file():
-            raise FileNotFoundError(f"Robot FK metadata not found: {self.link_json}")
-        if not self.urdf.is_file():
-            raise FileNotFoundError(f"Robot URDF not found: {self.urdf}")
-
-        with self.link_json.open("r", encoding="utf-8") as f:
-            self.metadata = json.load(f)
-        self.robot_model = _parse_robot_model(self.urdf)
-        self.parts = self._load_parts()
-        self._fk_link_names = set(self.robot_model.links)
-        self._warned_missing_fk_links: set[str] = set()
-        self.active_parts = []
-        for part in self.parts:
-            fk_link_name = self._resolve_fk_link_name(str(part["link_name"]))
-            if fk_link_name is None:
-                continue
-            part["fk_link_name"] = fk_link_name
-            part["normalized_rotation"] = torch.nn.functional.normalize(part["rotation"], dim=-1)
-            self.active_parts.append(part)
-        if not self.active_parts:
-            raise RuntimeError("No robot GS parts could be mapped to FK links.")
-        self.static_attrs = {
-            "features_dc": torch.cat([part["features_dc"] for part in self.active_parts], dim=0),
-            "features_rest": torch.cat([part["features_rest"] for part in self.active_parts], dim=0),
-            "scaling": torch.cat([part["scaling"] for part in self.active_parts], dim=0),
-            "opacity": torch.cat([part["opacity"] for part in self.active_parts], dim=0),
-        }
-        self.total_points = sum(int(part["xyz"].shape[0]) for part in self.parts)
-        print(
-            f"[INFO] Loaded robot texture GS parts={len(self.parts)} "
-            f"points={self.total_points} from {self.parts_dir}"
-        )
-
-    def _resolve_fk_link_name(self, link_name: str) -> str | None:
-        if link_name in self._fk_link_names:
-            return link_name
-        if link_name.startswith(self._FTP_LINK_PREFIX):
-            stripped = link_name[len(self._FTP_LINK_PREFIX) :]
-            if stripped in self._fk_link_names:
-                return stripped
-        if link_name not in self._warned_missing_fk_links:
-            print(f"[WARN] Robot texture FK link not found, skipping part transform: {link_name}")
-            self._warned_missing_fk_links.add(link_name)
-        return None
-
-    def _load_parts(self) -> list[dict[str, torch.Tensor | str]]:
-        parts = []
-        for joint_name in self.metadata["arm_hand_joint_names"]:
-            link_name = self.metadata["joint_child_link"][joint_name]
-            path = self.parts_dir / f"{joint_name}.ply"
-            if not path.is_file():
-                raise FileNotFoundError(f"Missing robot GS part for {joint_name}: {path}")
-
-            gs = self.gaussian_model_cls(3)
-            gs.load_ply(str(path))
-            parts.append(
-                {
-                    "joint_name": joint_name,
-                    "link_name": link_name,
-                    "xyz": gs._xyz.detach(),
-                    "features_dc": gs._features_dc.detach(),
-                    "features_rest": gs._features_rest.detach(),
-                    "scaling": gs._scaling.detach(),
-                    "rotation": gs._rotation.detach(),
-                    "opacity": gs._opacity.detach(),
-                }
-            )
-        return parts
-
-    def frame_attrs(
-        self,
-        root_state_w: np.ndarray,
-        joint_names: list[str],
-        joint_pos: np.ndarray,
-    ) -> dict[str, torch.Tensor]:
-        joint_values = {
-            str(joint_name): float(joint_pos[joint_idx])
-            for joint_idx, joint_name in enumerate(joint_names)
-        }
-        base_T_link = _compute_link_transforms(self.robot_model, joint_values)
-        root_state_w = np.asarray(root_state_w, dtype=np.float64).reshape(-1)
-        world_T_base = _pose_wxyz_to_matrix(root_state_w[:3], root_state_w[3:7])
-
-        xyz_parts = []
-        rotation_parts = []
-        for part in self.active_parts:
-            fk_link_name = str(part["fk_link_name"])
-            if fk_link_name not in base_T_link:
-                raise RuntimeError(f"Robot FK output is missing active link: {fk_link_name}")
-
-            link_T = np.asarray(base_T_link[fk_link_name], dtype=np.float64)
-            world_T_link = world_T_base @ link_T
-            rot_np = world_T_link[:3, :3].astype(np.float32)
-            trans_np = world_T_link[:3, 3].astype(np.float32)
-
-            xyz = part["xyz"]
-            rot = torch.from_numpy(rot_np).to(device=xyz.device, dtype=xyz.dtype)
-            trans = torch.from_numpy(trans_np).to(device=xyz.device, dtype=xyz.dtype)
-            xyz_parts.append(xyz @ rot.T + trans)
-
-            part_rotation = part["normalized_rotation"]
-            link_quat = torch.from_numpy(_matrix_to_quat_wxyz(rot_np)).to(
-                device=part_rotation.device,
-                dtype=part_rotation.dtype,
-            )
-            rotation_parts.append(_torch_quat_mul_wxyz(link_quat.reshape(1, 4), part_rotation))
-
-        if not xyz_parts:
-            raise RuntimeError("No robot GS parts could be mapped to FK links.")
-
-        return {
-            "xyz": torch.cat(xyz_parts, dim=0),
-            "features_dc": self.static_attrs["features_dc"],
-            "features_rest": self.static_attrs["features_rest"],
-            "scaling": self.static_attrs["scaling"],
-            "rotation": torch.cat(rotation_parts, dim=0),
-            "opacity": self.static_attrs["opacity"],
-        }
 
 
 class FakePlaneDepthRenderer:
@@ -461,10 +260,6 @@ class ThreeDGSRenderer:
         render_scale: float = 1.0,
         max_points: int | None = None,
         ros_pose: bool = False,
-        texture_robot: bool = False,
-        robot_parts_dir: str | Path = DEFAULT_ROBOT_PARTS_DIR,
-        robot_link_json: str | Path = DEFAULT_ROBOT_LINK_JSON,
-        robot_urdf: str | Path = DEFAULT_URDF,
         use_fake_plane_depth: bool = True,
     ):
         self.gs_ply = str(gs_ply)
@@ -527,16 +322,6 @@ class ThreeDGSRenderer:
                 f"foreground_depth_margin_mm must be finite and non-negative, got {self._foreground_depth_margin_mm}"
             )
         self._ros_pose = bool(ros_pose)
-        self._robot_assembler = (
-            RobotArmGSAssembler(
-                self._gaussian_model_cls,
-                parts_dir=robot_parts_dir,
-                link_json=robot_link_json,
-                urdf=robot_urdf,
-            )
-            if texture_robot
-            else None
-        )
         self._fake_plane_depth = FakePlaneDepthRenderer.from_model_path(self.gs_ply) if use_fake_plane_depth else None
 
     @staticmethod
@@ -723,40 +508,11 @@ class ThreeDGSRenderer:
         )
 
     @torch.no_grad()
-    def _build_combined_model(self, robot_attrs: dict[str, torch.Tensor] | None):
-        if robot_attrs is None:
-            return self._gs_model
-        combined = self._gaussian_model_cls(self._gs_model.max_sh_degree)
-        combined.active_sh_degree = self._gs_model.active_sh_degree
-        combined._xyz = torch.cat([self._gs_model._xyz.detach(), robot_attrs["xyz"]], dim=0)
-        combined._features_dc = torch.cat([self._gs_model._features_dc.detach(), robot_attrs["features_dc"]], dim=0)
-        combined._features_rest = torch.cat([self._gs_model._features_rest.detach(), robot_attrs["features_rest"]], dim=0)
-        combined._scaling = torch.cat([self._gs_model._scaling.detach(), robot_attrs["scaling"]], dim=0)
-        combined._rotation = torch.cat([self._gs_model._rotation.detach(), robot_attrs["rotation"]], dim=0)
-        combined._opacity = torch.cat([self._gs_model._opacity.detach(), robot_attrs["opacity"]], dim=0)
-        return combined
-
-    def robot_texture_enabled(self) -> bool:
-        return self._robot_assembler is not None
-
-    def robot_attrs(
-        self,
-        root_state_w: np.ndarray,
-        joint_names: list[str],
-        joint_pos: np.ndarray,
-    ) -> dict[str, torch.Tensor] | None:
-        if self._robot_assembler is None:
-            return None
-        return self._robot_assembler.frame_attrs(root_state_w, joint_names, joint_pos)
-
-    @torch.no_grad()
     def _render_bg_rgb_depth_mm(
         self,
         camera: _MiniCam,
-        robot_attrs: dict[str, torch.Tensor] | None = None,
     ) -> tuple[np.ndarray, np.ndarray]:
-        gs_model = self._build_combined_model(robot_attrs)
-        render_pkg = self._render_fn(camera, gs_model, self._pipe, self._bg_color)
+        render_pkg = self._render_fn(camera, self._gs_model, self._pipe, self._bg_color)
 
         bg_rgb = (
             render_pkg["render"].clamp(0.0, 1.0).permute(1, 2, 0).detach().cpu().numpy() * 255.0
@@ -855,10 +611,9 @@ class ThreeDGSRenderer:
         pos_: np.ndarray,
         quat_w_world: np.ndarray,
         output_shape_hw: tuple[int, int] | None = None,
-        robot_attrs: dict[str, torch.Tensor] | None = None,
     ) -> tuple[np.ndarray, np.ndarray]:
         camera = self._build_camera(pos_, quat_w_world)
-        bg_rgb, bg_depth_mm = self._render_bg_rgb_depth_mm(camera, robot_attrs=robot_attrs)
+        bg_rgb, bg_depth_mm = self._render_bg_rgb_depth_mm(camera)
 
         if output_shape_hw is not None:
             target_h, target_w = int(output_shape_hw[0]), int(output_shape_hw[1])
@@ -877,7 +632,6 @@ class ThreeDGSRenderer:
         isaac_render_rgb: np.ndarray,
         isaac_render_depth: np.ndarray,
         isaac_render_semantic_images: np.ndarray,
-        robot_attrs: dict[str, torch.Tensor] | None = None,
     ) -> tuple[np.ndarray, np.ndarray]:
         rgb = np.asarray(isaac_render_rgb)
         if rgb.dtype != np.uint8:
@@ -910,7 +664,6 @@ class ThreeDGSRenderer:
             pos_=pos_,
             quat_w_world=quat_w_world,
             output_shape_hw=(rgb.shape[0], rgb.shape[1]),
-            robot_attrs=robot_attrs,
         )
         bg_bgr = cv2.cvtColor(bg_rgb, cv2.COLOR_RGB2BGR)
         bg_depth_mm = np.clip(
